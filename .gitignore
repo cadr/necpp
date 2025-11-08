@@ -44,7 +44,9 @@ src/test_manager
 
 # Autotools #
 #############
-Makefile
+# Ignore autotools-generated Makefiles but not our custom ones
+/Makefile
+/src/Makefile
 Makefile.in
 aclocal.m4
 autom4te.cache/
