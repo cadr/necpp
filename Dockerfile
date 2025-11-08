@@ -12,6 +12,7 @@ COPY src/ ./src/
 # Copy wasm files explicitly to avoid .dockerignore issues
 COPY wasm/Makefile ./wasm/Makefile
 COPY wasm/CMakeLists.txt ./wasm/CMakeLists.txt
+COPY wasm/config.h ./wasm/config.h
 COPY wasm/necpp_bindings.cpp ./wasm/necpp_bindings.cpp
 COPY wasm/misc_wasm.cpp ./wasm/misc_wasm.cpp
 COPY wasm/wasm_compat.h ./wasm/wasm_compat.h

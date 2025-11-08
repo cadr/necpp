@@ -52,7 +52,9 @@ aclocal.m4
 autom4te.cache/
 compile
 configure
-config.*
+# Ignore autotools config files but not our custom ones
+/config.*
+/src/config.*
 depcomp
 install-sh
 libtool

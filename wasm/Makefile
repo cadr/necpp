@@ -22,8 +22,8 @@ SOURCES = \
 	../src/nec_results.cpp \
 	necpp_bindings.cpp
 
-# Include path
-INCLUDES = -I../src
+# Include path (add current dir for config.h)
+INCLUDES = -I../src -I.
 
 # Compiler flags
 CXXFLAGS = -O3 -std=c++11 -Wall -Wextra \
