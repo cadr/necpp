@@ -12,6 +12,10 @@ COPY wasm/ ./wasm/
 
 # Build the WebAssembly module
 WORKDIR /app/wasm
+
+# Debug: List what files we have
+RUN echo "Contents of /app/wasm:" && ls -la
+
 RUN make clean || true
 RUN make
 

@@ -3,7 +3,7 @@
 .gitignore
 .gitmodules
 
-# Build artifacts
+# Build artifacts (but not source files we need)
 *.o
 *.lo
 *.la
@@ -15,15 +15,11 @@
 .libs
 .deps
 
-# Autotools
+# Autotools generated files
 autom4te.cache
 config.log
 config.status
 configure
-Makefile.in
-# Exclude root-level autotools Makefiles (but keep wasm/Makefile)
-/Makefile
-/src/Makefile
 aclocal.m4
 compile
 depcomp
@@ -39,9 +35,7 @@ config.h.in
 __pycache__
 *.py[cod]
 *$py.class
-*.so
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -73,14 +67,12 @@ docs/_build/
 site/
 
 # Test files
-testharness/build
-*.test
+testharness/
 
 # Ruby
-Ruby/.bundle
+Ruby/
 
 # Backup files
-*~
 *.bak
 *.orig
 
@@ -89,17 +81,21 @@ Ruby/.bundle
 .travis.yml
 .circleci
 
-# Other
-README
+# Project-specific files we don't need for Docker build
+example/
+python/
+win32/
+antlr/
+*.pdf
+*.txt
 AUTHORS
 ChangeLog
 COPYING
-INSTALL
+INSTALL.md
 NEWS
 TODO
-*.md
-!wasm/*.md
 
-# Keep only what we need for WASM build
-!src/
-!wasm/
+# Keep these markdown files
+!wasm/README.md
+!wasm/QUICKSTART.md
+!wasm/*.md
