@@ -1,0 +1,21 @@
+# Build artifacts
+*.wasm
+necpp.js
+*.o
+*.so
+*.a
+
+# Build directories
+build/
+cmake_build/
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
