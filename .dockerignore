@@ -21,7 +21,9 @@ config.log
 config.status
 configure
 Makefile.in
-Makefile
+# Exclude root-level autotools Makefiles (but keep wasm/Makefile)
+/Makefile
+/src/Makefile
 aclocal.m4
 compile
 depcomp
