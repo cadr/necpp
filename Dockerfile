@@ -8,7 +8,19 @@ WORKDIR /app
 
 # Copy source files
 COPY src/ ./src/
-COPY wasm/ ./wasm/
+
+# Copy wasm files explicitly to avoid .dockerignore issues
+COPY wasm/Makefile ./wasm/Makefile
+COPY wasm/CMakeLists.txt ./wasm/CMakeLists.txt
+COPY wasm/necpp_bindings.cpp ./wasm/necpp_bindings.cpp
+COPY wasm/misc_wasm.cpp ./wasm/misc_wasm.cpp
+COPY wasm/wasm_compat.h ./wasm/wasm_compat.h
+COPY wasm/demo.html ./wasm/demo.html
+COPY wasm/example.js ./wasm/example.js
+COPY wasm/README.md ./wasm/README.md
+COPY wasm/QUICKSTART.md ./wasm/QUICKSTART.md
+COPY wasm/build.sh ./wasm/build.sh
+COPY wasm/test_build.js ./wasm/test_build.js
 
 # Build the WebAssembly module
 WORKDIR /app/wasm
