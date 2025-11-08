@@ -11,6 +11,19 @@ NEC++ is a powerful electromagnetic simulation software that implements the Meth
 - Integrate electromagnetic simulation into web applications
 - Perform antenna design and analysis without installing native software
 
+## Quick Start with Docker (Easiest!)
+
+The fastest way to try the demo is using Docker:
+
+```bash
+# From the repository root
+docker-compose up
+```
+
+Then open **http://localhost:8000** in your browser!
+
+For more Docker options, see the [Docker Guide](../DOCKER.md) in the repository root.
+
 ## Building the WebAssembly Module
 
 ### Prerequisites

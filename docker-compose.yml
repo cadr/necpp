@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  necpp-wasm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    container_name: necpp-wasm-demo
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+    labels:
+      - "description=NEC++ WebAssembly Demo Server"
+      - "maintainer=NEC++ Project"

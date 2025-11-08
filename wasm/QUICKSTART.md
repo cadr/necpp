@@ -1,6 +1,26 @@
 # NEC++ WebAssembly Quick Start Guide
 
-## Prerequisites
+## Easiest Method: Docker
+
+If you have Docker installed, this is the fastest way to get started:
+
+```bash
+# From the repository root
+cd /path/to/necpp
+docker-compose up
+```
+
+Then open **http://localhost:8000** in your browser!
+
+See [DOCKER.md](../DOCKER.md) for more Docker options.
+
+---
+
+## Manual Build Method
+
+If you prefer to build manually without Docker, follow these steps:
+
+### Prerequisites
 
 1. **Install Emscripten SDK**
 

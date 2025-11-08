@@ -1,0 +1,103 @@
+# Git files
+.git
+.gitignore
+.gitmodules
+
+# Build artifacts
+*.o
+*.lo
+*.la
+*.so
+*.so.*
+*.a
+*.dylib
+*.exe
+.libs
+.deps
+
+# Autotools
+autom4te.cache
+config.log
+config.status
+configure
+Makefile.in
+Makefile
+aclocal.m4
+compile
+depcomp
+install-sh
+libtool
+ltmain.sh
+missing
+stamp-h1
+config.h
+config.h.in
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Documentation build
+docs/_build/
+site/
+
+# Test files
+testharness/build
+*.test
+
+# Ruby
+Ruby/.bundle
+
+# Backup files
+*~
+*.bak
+*.orig
+
+# CI/CD
+.github
+.travis.yml
+.circleci
+
+# Other
+README
+AUTHORS
+ChangeLog
+COPYING
+INSTALL
+NEWS
+TODO
+*.md
+!wasm/*.md
+
+# Keep only what we need for WASM build
+!src/
+!wasm/
