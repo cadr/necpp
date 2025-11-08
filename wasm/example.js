@@ -112,23 +112,9 @@ async function runDipoleSimulation() {
     const swr = (1 + gamma) / (1 - gamma);
     console.log(`SWR (50Ω): ${swr.toFixed(2)}:1`);
 
-    // Get radiation pattern data
-    const rpCount = nec.getRpCount();
-    console.log(`\nRadiation patterns available: ${rpCount}`);
-
-    if (rpCount > 0) {
-        const ntheta = nec.getRpNtheta(0);
-        const nphi = nec.getRpNphi(0);
-        console.log(`Pattern points: ${ntheta} theta × ${nphi} phi`);
-
-        // Sample some radiation pattern points
-        console.log('\nSample Pattern Data (theta, gain):');
-        for (let i = 0; i < Math.min(5, ntheta); i++) {
-            const theta = nec.getRpTheta(0, i, 0);
-            const gain = nec.getRpGainTot(0, i, 0);
-            console.log(`  θ = ${theta.toFixed(1)}°, Gain = ${gain.toFixed(2)} dBi`);
-        }
-    }
+    // Note: Detailed radiation pattern data access is not available in the
+    // C API bindings. For detailed pattern analysis, use the C++ API directly.
+    // The simplified API provides aggregate statistics (max, min, mean, sd).
 
     // Clean up
     nec.delete();

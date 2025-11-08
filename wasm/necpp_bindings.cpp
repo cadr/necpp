@@ -122,45 +122,10 @@ public:
         return nec_impedance_imag(ctx, freq_index);
     }
 
-    // Radiation pattern data
-    int get_rp_count() {
-        return nec_result_rp_get_count(ctx);
-    }
-
-    int get_rp_ntheta(int rp_index) {
-        return nec_result_rp_get_ntheta(ctx, rp_index);
-    }
-
-    int get_rp_nphi(int rp_index) {
-        return nec_result_rp_get_nphi(ctx, rp_index);
-    }
-
-    double get_rp_theta(int rp_index, int theta_index, int phi_index) {
-        return nec_result_rp_get_theta(ctx, rp_index, theta_index, phi_index);
-    }
-
-    double get_rp_phi(int rp_index, int theta_index, int phi_index) {
-        return nec_result_rp_get_phi(ctx, rp_index, theta_index, phi_index);
-    }
-
-    double get_rp_gain_vert(int rp_index, int theta_index, int phi_index) {
-        return nec_result_rp_get_gain_vert(ctx, rp_index, theta_index, phi_index);
-    }
-
-    double get_rp_gain_horiz(int rp_index, int theta_index, int phi_index) {
-        return nec_result_rp_get_gain_horiz(ctx, rp_index, theta_index, phi_index);
-    }
-
-    double get_rp_gain_tot(int rp_index, int theta_index, int phi_index) {
-        return nec_result_rp_get_gain_tot(ctx, rp_index, theta_index, phi_index);
-    }
-
-    double get_rp_gain_rhcp(int rp_index, int theta_index, int phi_index) {
-        return nec_result_rp_get_gain_rhcp(ctx, rp_index, theta_index, phi_index);
-    }
-
-    double get_rp_gain_lhcp(int rp_index, int theta_index, int phi_index) {
-        return nec_result_rp_get_gain_lhcp(ctx, rp_index, theta_index, phi_index);
+    // Simplified gain access (the detailed radiation pattern functions
+    // are not available in the C API, only in the C++ API)
+    double get_gain(int freq_index, int theta_index, int phi_index) {
+        return nec_gain(ctx, freq_index, theta_index, phi_index);
     }
 
     // Error handling
@@ -209,18 +174,7 @@ EMSCRIPTEN_BINDINGS(necpp_module) {
         .function("getGainSd", &NecppWrapper::get_gain_sd)
         .function("getImpedanceReal", &NecppWrapper::get_impedance_real)
         .function("getImpedanceImag", &NecppWrapper::get_impedance_imag)
-
-        // Radiation pattern data
-        .function("getRpCount", &NecppWrapper::get_rp_count)
-        .function("getRpNtheta", &NecppWrapper::get_rp_ntheta)
-        .function("getRpNphi", &NecppWrapper::get_rp_nphi)
-        .function("getRpTheta", &NecppWrapper::get_rp_theta)
-        .function("getRpPhi", &NecppWrapper::get_rp_phi)
-        .function("getRpGainVert", &NecppWrapper::get_rp_gain_vert)
-        .function("getRpGainHoriz", &NecppWrapper::get_rp_gain_horiz)
-        .function("getRpGainTot", &NecppWrapper::get_rp_gain_tot)
-        .function("getRpGainRhcp", &NecppWrapper::get_rp_gain_rhcp)
-        .function("getRpGainLhcp", &NecppWrapper::get_rp_gain_lhcp)
+        .function("getGain", &NecppWrapper::get_gain)
 
         // Error handling
         .function("getErrorMessage", &NecppWrapper::get_error_message);
