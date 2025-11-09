@@ -67,7 +67,7 @@ docs/_build/
 site/
 
 # Test files
-testharness/
+# testharness/ - Commented out: needed for WASM testing Dockerfile
 
 # Ruby
 Ruby/

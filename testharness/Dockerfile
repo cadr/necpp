@@ -43,8 +43,7 @@ RUN bash build_simple.sh
 
 # Build WASM version
 RUN cd wasm && \
-    source /opt/emsdk/emsdk_env.sh && \
-    make
+    bash -c "source /opt/emsdk/emsdk_env.sh && make"
 
 # Set up test harness
 WORKDIR /work/testharness
