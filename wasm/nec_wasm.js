@@ -364,16 +364,60 @@ async function processNecFile(inputFile, outputFile) {
                             output.line(`  Warning: ${errorMsg}`);
                         }
 
-                        // Print impedance results
-                        try {
-                            const zReal = nec.getImpedanceReal(freqIndex);
-                            const zImag = nec.getImpedanceImag(freqIndex);
-                            output.line();
-                            output.line('ANTENNA INPUT PARAMETERS');
-                            output.line(`  Impedance: ${zReal.toExponential(5)} + j${zImag.toExponential(5)} Ohms`);
-                            output.line(`  Impedance: ${zReal.toFixed(4)} + j${zImag.toFixed(4)} Ohms`);
-                        } catch (e) {
-                            // Results might not be available
+                        // Loop through all frequencies and output results for each
+                        let currentFreqIndex = 0;
+                        while (true) {
+                            const currCount = nec.getCurrentCount(currentFreqIndex);
+                            if (currCount <= 0) break;  // No more frequencies
+
+                            // Print impedance results
+                            try {
+                                const zReal = nec.getImpedanceReal(currentFreqIndex);
+                                const zImag = nec.getImpedanceImag(currentFreqIndex);
+                                output.line();
+                                output.line('ANTENNA INPUT PARAMETERS');
+                                output.line(`  Impedance: ${zReal.toExponential(5)} + j${zImag.toExponential(5)} Ohms`);
+                                output.line(`  Impedance: ${zReal.toFixed(4)} + j${zImag.toFixed(4)} Ohms`);
+                            } catch (e) {
+                                // Results might not be available
+                            }
+
+                            // Output current distribution
+                            try {
+                                if (currCount > 0) {
+                                    output.line();
+                                    output.line();
+                                    output.line();
+                                    output.line();
+                                    output.line();
+                                    output.line();
+                                    output.line('                        - - - CURRENTS AND LOCATION - - -');
+                                    output.line('                            DISTANCES IN WAVELENGTHS ');
+                                    output.line();
+                                    output.line('   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------');
+                                    output.line('   NO:  NO:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE');
+                                    for (let i = 0; i < currCount; i++) {
+                                        const curr = nec.getCurrent(currentFreqIndex, i);
+                                        if (curr.success) {
+                                            const segNum = curr.segmentNumber.toString().padStart(5);
+                                            const tag = curr.segmentTag.toString().padStart(5);
+                                            const x = curr.x.toFixed(4).padStart(10);
+                                            const y = curr.y.toFixed(4).padStart(10);
+                                            const z = curr.z.toFixed(4).padStart(10);
+                                            const len = curr.length.toFixed(5).padStart(9);
+                                            const re = curr.currentReal.toExponential(4).padStart(12);
+                                            const im = curr.currentImag.toExponential(4).padStart(12);
+                                            const mag = Math.sqrt(curr.currentReal**2 + curr.currentImag**2).toExponential(4).padStart(11);
+                                            const phase = (Math.atan2(curr.currentImag, curr.currentReal) * 180 / Math.PI).toFixed(3).padStart(10);
+                                            output.line(`${segNum}${tag}${x}${y}${z}${len}${re}${im}${mag}${phase}`);
+                                        }
+                                    }
+                                }
+                            } catch (e) {
+                                // Current data not available
+                            }
+
+                            currentFreqIndex++;
                         }
                     } catch (e) {
                         output.line(`  XQ execution failed: ${e.message}`);
@@ -383,46 +427,7 @@ async function processNecFile(inputFile, outputFile) {
 
                 case 'PT': // Print current
                     nec.ptCard(card.i1, card.i2, card.i3, card.i4);
-
-                    // Output current distribution
-                    try {
-                        const currCount = nec.getCurrentCount(0);
-                        if (currCount > 0) {
-                            output.line();
-                            output.section('                             - - - - STRUCTURE EXCITATION DATA AT NETWORK CONNECTION POINTS - - - -');
-                            output.line('  TAG   SEG       VOLTAGE (VOLTS)           CURRENT (AMPS)           IMPEDANCE (OHMS)          ADMITTANCE (MHOS)        POWER');
-                            output.line('  NO.   NO.      REAL      IMAGINARY      REAL      IMAGINARY      REAL      IMAGINARY      REAL      IMAGINARY   (WATTS)');
-
-                            output.line();
-                            output.section('                                  - - - ANTENNA INPUT PARAMETERS - - -');
-                            output.line('  TAG   SEG       VOLTAGE (VOLTS)           CURRENT (AMPS)           IMPEDANCE (OHMS)          ADMITTANCE (MHOS)        POWER');
-                            output.line('  NO.   NO.      REAL      IMAGINARY      REAL      IMAGINARY      REAL      IMAGINARY      REAL      IMAGINARY   (WATTS)');
-
-                            output.line();
-                            output.section('                                     - - - CURRENTS AND LOCATION - - -');
-                            output.line('                                  DISTANCES IN WAVELENGTHS');
-                            output.line('  SEG.   TAG     COORD. OF SEG. CENTER    SEG.         -----------  CURRENT (AMPS) -----------');
-                            output.line('  NO.    NO.       X         Y         Z    LENGTH     REAL      IMAGINARY     MAG.      PHASE');
-                            for (let i = 0; i < currCount; i++) {
-                                const curr = nec.getCurrent(0, i);
-                                if (curr.success) {
-                                    const segNum = curr.segmentNumber.toString().padStart(5);
-                                    const tag = curr.segmentTag.toString().padStart(5);
-                                    const x = curr.x.toFixed(5).padStart(11);
-                                    const y = curr.y.toFixed(5).padStart(11);
-                                    const z = curr.z.toFixed(5).padStart(11);
-                                    const len = curr.length.toFixed(5).padStart(11);
-                                    const re = curr.currentReal.toExponential(5).padStart(14);
-                                    const im = curr.currentImag.toExponential(5).padStart(14);
-                                    const mag = Math.sqrt(curr.currentReal**2 + curr.currentImag**2).toExponential(5).padStart(13);
-                                    const phase = (Math.atan2(curr.currentImag, curr.currentReal) * 180 / Math.PI).toFixed(2).padStart(10);
-                                    output.line(`${segNum}${tag}${x}${y}${z}${len}${re}${im}${mag}${phase}`);
-                                }
-                            }
-                        }
-                    } catch (e) {
-                        // Current data not available
-                    }
+                    // Note: Current output is now handled automatically after XQ execution
                     break;
 
                 case 'PQ': // Print charge
@@ -433,23 +438,28 @@ async function processNecFile(inputFile, outputFile) {
                         const chargeCount = nec.getChargeCount(0);
                         if (chargeCount > 0) {
                             output.line();
-                            output.section('                                     - - - CHARGE DENSITIES - - -');
-                            output.line('                                  DISTANCES IN WAVELENGTHS');
-                            output.line('  SEG.   TAG     COORD. OF SEG. CENTER    SEG.      --------- CHARGE DENSITY (COULOMBS/METER) ---------');
-                            output.line('  NO.    NO.       X         Y         Z    LENGTH     REAL      IMAGINARY     MAG.      PHASE');
+                            output.line();
+                            output.line();
+                            output.line();
+                            output.line();
+                            output.line('                          - - - CHARGE DENSITIES - - -');
+                            output.line('                            DISTANCES IN WAVELENGTHS ');
+                            output.line();
+                            output.line('   SEG   TAG    COORDINATES OF SEG CENTER     SEG          CHARGE DENSITY (COULOMBS/METER)');
+                            output.line('   NO:   NO:     X         Y         Z       LENGTH     REAL      IMAGINARY     MAGN        PHASE');
                             for (let i = 0; i < chargeCount; i++) {
                                 const charge = nec.getCharge(0, i);
                                 if (charge.success) {
                                     const segNum = charge.segmentNumber.toString().padStart(5);
                                     const tag = charge.segmentTag.toString().padStart(5);
-                                    const x = charge.x.toFixed(5).padStart(11);
-                                    const y = charge.y.toFixed(5).padStart(11);
-                                    const z = charge.z.toFixed(5).padStart(11);
-                                    const len = charge.length.toFixed(5).padStart(11);
-                                    const re = charge.chargeReal.toExponential(5).padStart(14);
-                                    const im = charge.chargeImag.toExponential(5).padStart(14);
-                                    const mag = Math.sqrt(charge.chargeReal**2 + charge.chargeImag**2).toExponential(5).padStart(13);
-                                    const phase = (Math.atan2(charge.chargeImag, charge.chargeReal) * 180 / Math.PI).toFixed(2).padStart(10);
+                                    const x = charge.x.toFixed(4).padStart(10);
+                                    const y = charge.y.toFixed(4).padStart(10);
+                                    const z = charge.z.toFixed(4).padStart(10);
+                                    const len = charge.length.toFixed(5).padStart(9);
+                                    const re = charge.chargeReal.toExponential(4).padStart(12);
+                                    const im = charge.chargeImag.toExponential(4).padStart(12);
+                                    const mag = Math.sqrt(charge.chargeReal**2 + charge.chargeImag**2).toExponential(4).padStart(11);
+                                    const phase = (Math.atan2(charge.chargeImag, charge.chargeReal) * 180 / Math.PI).toFixed(3).padStart(10);
                                     output.line(`${segNum}${tag}${x}${y}${z}${len}${re}${im}${mag}${phase}`);
                                 }
                             }
@@ -462,6 +472,77 @@ async function processNecFile(inputFile, outputFile) {
                 case 'NE': // Near electric field
                     try {
                         nec.neCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
+
+                        // NE card may trigger execution - output currents if available
+                        try {
+                            const currCount = nec.getCurrentCount(0);
+                            if (currCount > 0) {
+                                output.line();
+                                output.line();
+                                output.line();
+                                output.line();
+                                output.line();
+                                output.line();
+                                output.line('                        - - - CURRENTS AND LOCATION - - -');
+                                output.line('                            DISTANCES IN WAVELENGTHS ');
+                                output.line();
+                                output.line('   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------');
+                                output.line('   NO:  NO:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE');
+                                for (let i = 0; i < currCount; i++) {
+                                    const curr = nec.getCurrent(0, i);
+                                    if (curr.success) {
+                                        const segNum = curr.segmentNumber.toString().padStart(5);
+                                        const tag = curr.segmentTag.toString().padStart(5);
+                                        const x = curr.x.toFixed(4).padStart(10);
+                                        const y = curr.y.toFixed(4).padStart(10);
+                                        const z = curr.z.toFixed(4).padStart(10);
+                                        const len = curr.length.toFixed(5).padStart(9);
+                                        const re = curr.currentReal.toExponential(4).padStart(12);
+                                        const im = curr.currentImag.toExponential(4).padStart(12);
+                                        const mag = Math.sqrt(curr.currentReal**2 + curr.currentImag**2).toExponential(4).padStart(11);
+                                        const phase = (Math.atan2(curr.currentImag, curr.currentReal) * 180 / Math.PI).toFixed(3).padStart(10);
+                                        output.line(`${segNum}${tag}${x}${y}${z}${len}${re}${im}${mag}${phase}`);
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            // Current data not available
+                        }
+
+                        // Output charge distribution if PQ was called
+                        try {
+                            const chargeCount = nec.getChargeCount(0);
+                            if (chargeCount > 0) {
+                                output.line();
+                                output.line();
+                                output.line();
+                                output.line();
+                                output.line();
+                                output.line('                          - - - CHARGE DENSITIES - - -');
+                                output.line('                            DISTANCES IN WAVELENGTHS ');
+                                output.line();
+                                output.line('   SEG   TAG    COORDINATES OF SEG CENTER     SEG          CHARGE DENSITY (COULOMBS/METER)');
+                                output.line('   NO:   NO:     X         Y         Z       LENGTH     REAL      IMAGINARY     MAGN        PHASE');
+                                for (let i = 0; i < chargeCount; i++) {
+                                    const charge = nec.getCharge(0, i);
+                                    if (charge.success) {
+                                        const segNum = charge.segmentNumber.toString().padStart(5);
+                                        const tag = charge.segmentTag.toString().padStart(5);
+                                        const x = charge.x.toFixed(4).padStart(10);
+                                        const y = charge.y.toFixed(4).padStart(10);
+                                        const z = charge.z.toFixed(4).padStart(10);
+                                        const len = charge.length.toFixed(5).padStart(9);
+                                        const re = charge.chargeReal.toExponential(4).padStart(12);
+                                        const im = charge.chargeImag.toExponential(4).padStart(12);
+                                        const mag = Math.sqrt(charge.chargeReal**2 + charge.chargeImag**2).toExponential(4).padStart(11);
+                                        const phase = (Math.atan2(charge.chargeImag, charge.chargeReal) * 180 / Math.PI).toFixed(3).padStart(10);
+                                        output.line(`${segNum}${tag}${x}${y}${z}${len}${re}${im}${mag}${phase}`);
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            // Charge data not available
+                        }
 
                         // Output near electric field data
                         const nfCount = nec.getNearFieldPointCount(0);
