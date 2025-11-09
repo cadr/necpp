@@ -147,10 +147,14 @@ compare: test_cpp test_wasm
 	done; \
 	echo "Summary: $$passed passed, $$failed failed"; \
 	echo ""; \
-	echo "NOTE: Comparison failures are expected if WASM tests encounter"; \
-	echo "      runtime errors (divide by zero, etc). Tests that run"; \
-	echo "      without crashing are considered successful."; \
-	echo ""
+	if [ $$failed -gt 0 ]; then \
+		echo "ERROR: $$failed test(s) failed!"; \
+		echo ""; \
+		exit 1; \
+	else \
+		echo "SUCCESS: All tests passed!"; \
+		echo ""; \
+	fi
 
 ###########################################################################
 # Detailed comparison report
