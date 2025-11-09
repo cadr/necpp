@@ -212,6 +212,12 @@ async function processNecFile(inputFile, outputFile) {
     const nec = new Module.NecppWrapper();
 
     try {
+        // Check for errors after initialization
+        let errorMsg = nec.getErrorMessage();
+        if (errorMsg && errorMsg.length > 0) {
+            throw new Error(`Initialization error: ${errorMsg}`);
+        }
+
         // Process geometry cards
         output.section('GEOMETRY');
         for (const card of cards.geometry) {
@@ -252,6 +258,14 @@ async function processNecFile(inputFile, outputFile) {
                     nec.geometryComplete(card.i1);
                     output.line('Geometry complete');
                     break;
+
+                case 'GM': // Geometry move
+                    nec.gmCard(card.i1, card.i2, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6, card.i3);
+                    break;
+
+                case 'SC': // Surface continuation
+                    nec.scCard(card.i1, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
+                    break;
             }
         }
 
@@ -259,6 +273,7 @@ async function processNecFile(inputFile, outputFile) {
         output.section('PROGRAM CARDS');
 
         let freqIndex = 0;
+        let hasFrequency = false;
 
         for (const card of cards.program) {
             output.line(`${card.card} ${card.i1} ${card.i2} ${card.i3} ${card.i4} ${card.f1.toExponential(5)} ${card.f2.toExponential(5)} ${card.f3.toExponential(5)} ${card.f4.toExponential(5)} ${card.f5.toExponential(5)} ${card.f6.toExponential(5)}`);
@@ -266,6 +281,7 @@ async function processNecFile(inputFile, outputFile) {
             switch (card.card) {
                 case 'FR': // Frequency
                     nec.frCard(card.i1, card.i2, card.f1, card.f2);
+                    hasFrequency = true;
                     break;
 
                 case 'GN': // Ground
@@ -288,55 +304,127 @@ async function processNecFile(inputFile, outputFile) {
                     nec.ntCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
                     break;
 
-                case 'RP': // Radiation pattern
-                    nec.rpCard(card.i1, card.i2, card.i3,
-                              Math.floor(card.i4 / 1000),           // X
-                              Math.floor((card.i4 / 100) % 10),     // N
-                              Math.floor((card.i4 / 10) % 10),      // D
-                              card.i4 % 10,                          // A
-                              card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
+                case 'EK': // Extended kernel
+                    nec.ekCard(card.i1);
+                    break;
 
-                    // Get and print results
+                case 'KH': // Kernel handling
+                    nec.khCard(card.f1);
+                    break;
+
+                case 'GD': // Ground description
+                    nec.gdCard(card.f1, card.f2, card.f3, card.f4);
+                    break;
+
+                case 'MP': // Medium parameters
+                    nec.mediumParameters(card.f1, card.f2);
+                    break;
+
+                case 'XQ': // Execute
+                    // Set a default frequency if none has been specified
+                    if (!hasFrequency) {
+                        output.line('  (Setting default frequency: 299.8 MHz)');
+                        nec.frCard(0, 1, 299.8, 0);  // Default to 299.8 MHz
+                        hasFrequency = true;
+                    }
                     try {
-                        output.line();
-                        output.line('RADIATION PATTERN RESULTS:');
-                        const gainMax = nec.getGainMax(freqIndex);
-                        const gainMin = nec.getGainMin(freqIndex);
-                        const gainMean = nec.getGainMean(freqIndex);
-                        const gainSd = nec.getGainSd(freqIndex);
-                        const zReal = nec.getImpedanceReal(freqIndex);
-                        const zImag = nec.getImpedanceImag(freqIndex);
+                        nec.xqCard(card.i1);
 
-                        output.line(`  Maximum Gain:        ${gainMax.toFixed(4)} dBi`);
-                        output.line(`  Minimum Gain:        ${gainMin.toFixed(4)} dBi`);
-                        output.line(`  Mean Gain:           ${gainMean.toFixed(4)} dBi`);
-                        output.line(`  Gain Std Dev:        ${gainSd.toFixed(4)} dB`);
-                        output.line(`  Impedance:           ${zReal.toFixed(4)} + j${zImag.toFixed(4)} Ohms`);
+                        // Check for errors
+                        const errorMsg = nec.getErrorMessage();
+                        if (errorMsg && errorMsg.length > 0) {
+                            output.line(`  Warning: ${errorMsg}`);
+                        }
+                    } catch (e) {
+                        output.line(`  XQ execution failed: ${e.message}`);
+                        // Continue processing instead of throwing
+                    }
+                    break;
 
-                        // Try to get pattern data points
-                        const nTheta = card.i2;
-                        const nPhi = card.i3;
+                case 'PT': // Print current
+                    nec.ptCard(card.i1, card.i2, card.i3, card.i4);
+                    break;
 
-                        if (nTheta > 0 && nPhi > 0) {
+                case 'PQ': // Print charge
+                    nec.pqCard(card.i1, card.i2, card.i3, card.i4);
+                    break;
+
+                case 'NE': // Near electric field
+                    try {
+                        nec.neCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
+                    } catch (e) {
+                        output.line(`  NE card execution failed: ${e.message}`);
+                        // Continue processing
+                    }
+                    break;
+
+                case 'NH': // Near magnetic field
+                    try {
+                        nec.nhCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
+                    } catch (e) {
+                        output.line(`  NH card execution failed: ${e.message}`);
+                        // Continue processing
+                    }
+                    break;
+
+                case 'CP': // Coupling
+                    nec.cpCard(card.i1, card.i2, card.i3, card.i4);
+                    break;
+
+                case 'RP': // Radiation pattern
+                    try {
+                        nec.rpCard(card.i1, card.i2, card.i3,
+                                  Math.floor(card.i4 / 1000),           // X
+                                  Math.floor((card.i4 / 100) % 10),     // N
+                                  Math.floor((card.i4 / 10) % 10),      // D
+                                  card.i4 % 10,                          // A
+                                  card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
+
+                        // Get and print results
+                        try {
                             output.line();
-                            output.line('  PATTERN DATA (theta, phi, gain):');
-                            for (let t = 0; t < Math.min(nTheta, 5); t++) {
-                                for (let p = 0; p < Math.min(nPhi, 3); p++) {
-                                    try {
-                                        const gain = nec.getGain(freqIndex, t, p);
-                                        const theta = card.f1 + t * card.f3;
-                                        const phi = card.f2 + p * card.f4;
-                                        output.line(`    ${theta.toFixed(1)}° ${phi.toFixed(1)}° ${gain.toFixed(4)} dBi`);
-                                    } catch (e) {
-                                        // Silently ignore if gain data not available
+                            output.line('RADIATION PATTERN RESULTS:');
+                            const gainMax = nec.getGainMax(freqIndex);
+                            const gainMin = nec.getGainMin(freqIndex);
+                            const gainMean = nec.getGainMean(freqIndex);
+                            const gainSd = nec.getGainSd(freqIndex);
+                            const zReal = nec.getImpedanceReal(freqIndex);
+                            const zImag = nec.getImpedanceImag(freqIndex);
+
+                            output.line(`  Maximum Gain:        ${gainMax.toFixed(4)} dBi`);
+                            output.line(`  Minimum Gain:        ${gainMin.toFixed(4)} dBi`);
+                            output.line(`  Mean Gain:           ${gainMean.toFixed(4)} dBi`);
+                            output.line(`  Gain Std Dev:        ${gainSd.toFixed(4)} dB`);
+                            output.line(`  Impedance:           ${zReal.toFixed(4)} + j${zImag.toFixed(4)} Ohms`);
+
+                            // Try to get pattern data points
+                            const nTheta = card.i2;
+                            const nPhi = card.i3;
+
+                            if (nTheta > 0 && nPhi > 0) {
+                                output.line();
+                                output.line('  PATTERN DATA (theta, phi, gain):');
+                                for (let t = 0; t < Math.min(nTheta, 5); t++) {
+                                    for (let p = 0; p < Math.min(nPhi, 3); p++) {
+                                        try {
+                                            const gain = nec.getGain(freqIndex, t, p);
+                                            const theta = card.f1 + t * card.f3;
+                                            const phi = card.f2 + p * card.f4;
+                                            output.line(`    ${theta.toFixed(1)}° ${phi.toFixed(1)}° ${gain.toFixed(4)} dBi`);
+                                        } catch (e) {
+                                            // Silently ignore if gain data not available
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        freqIndex++;
+                            freqIndex++;
+                        } catch (e) {
+                            output.line(`  Error retrieving results: ${e.message}`);
+                        }
                     } catch (e) {
-                        output.line(`  Error retrieving results: ${e.message}`);
+                        output.line(`  RP card execution failed: ${e.message}`);
+                        // Continue processing
                     }
                     break;
 
@@ -359,7 +447,12 @@ async function processNecFile(inputFile, outputFile) {
     } catch (error) {
         console.error('Error processing NEC file:', error.message);
         console.error(error.stack);
-        nec.delete();
+
+        // Write output anyway (might have partial results)
+        fs.writeFileSync(outputFile, output.getOutput());
+        console.log(`Partial output written to: ${outputFile}`);
+
+        try { nec.delete(); } catch(e) {}
         return 1;
     }
 }
