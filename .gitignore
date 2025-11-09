@@ -59,12 +59,18 @@ depcomp
 install-sh
 libtool
 ltmain.sh
-# m4/
+/m4/
+config/m4/
 missing
 src/.deps/
 src/.libs/
 stamp-h1
 necpp.pc
+
+# Build artifacts #
+###################
+/nec2++
+*.outwasm
 
 html/*
 xml/*
