@@ -593,9 +593,147 @@ double nec_gain_lhcp_sd(nec_context* in_context, int freq_index);
  */
 double nec_impedance_real(nec_context* in_context, int freq_index);
 
-/*! \brief Impedance: Imaginary Part 
+/*! \brief Impedance: Imaginary Part
  */
 double nec_impedance_imag(nec_context* in_context, int freq_index);
+
+///@}
+
+
+/** @name Geometry Data Access
+ * Functions for accessing geometry information after geometry_complete()
+ */
+///@{
+
+/*! \brief Get the number of segments in the geometry
+ * \param in_context The nec_context
+ * \return The number of segments
+ */
+int nec_get_segment_count(nec_context* in_context);
+
+/*! \brief Get segment data for a specific segment
+ * \param in_context The nec_context
+ * \param segment_index The zero-based segment index
+ * \param x Pointer to receive the x coordinate of the segment center
+ * \param y Pointer to receive the y coordinate of the segment center
+ * \param z Pointer to receive the z coordinate of the segment center
+ * \param length Pointer to receive the segment length
+ * \param alpha Pointer to receive the alpha angle (degrees)
+ * \param beta Pointer to receive the beta angle (degrees)
+ * \param radius Pointer to receive the segment radius
+ * \return 0 on success, non-zero on error
+ */
+long nec_get_segment(nec_context* in_context, int segment_index,
+                     double* x, double* y, double* z, double* length,
+                     double* alpha, double* beta, double* radius);
+
+///@}
+
+
+/** @name Current Distribution Access
+ * Functions for accessing current distribution data after simulation
+ */
+///@{
+
+/*! \brief Get structure currents result count
+ * \param in_context The nec_context
+ * \return The number of structure current results available
+ */
+int nec_get_structure_currents_count(nec_context* in_context);
+
+/*! \brief Get the number of current elements in a result
+ * \param in_context The nec_context
+ * \param result_index The result index (usually 0)
+ * \return The number of current elements, or -1 if result doesn't exist
+ */
+int nec_get_current_count(nec_context* in_context, int result_index);
+
+/*! \brief Get current data for a specific segment
+ * \param in_context The nec_context
+ * \param result_index The result index (usually 0)
+ * \param element_index The zero-based element index
+ * \param segment_number Pointer to receive the segment number
+ * \param segment_tag Pointer to receive the segment tag
+ * \param x Pointer to receive the x coordinate
+ * \param y Pointer to receive the y coordinate
+ * \param z Pointer to receive the z coordinate
+ * \param length Pointer to receive the segment length
+ * \param current_real Pointer to receive the real part of current (amps)
+ * \param current_imag Pointer to receive the imaginary part of current (amps)
+ * \return 0 on success, non-zero on error
+ */
+long nec_get_current(nec_context* in_context, int result_index, int element_index,
+                     int* segment_number, int* segment_tag,
+                     double* x, double* y, double* z, double* length,
+                     double* current_real, double* current_imag);
+
+/*! \brief Get the number of charge density elements in a result
+ * \param in_context The nec_context
+ * \param result_index The result index (usually 0)
+ * \return The number of charge density elements, or -1 if result doesn't exist
+ */
+int nec_get_charge_count(nec_context* in_context, int result_index);
+
+/*! \brief Get charge density data for a specific segment
+ * \param in_context The nec_context
+ * \param result_index The result index (usually 0)
+ * \param element_index The zero-based element index
+ * \param segment_number Pointer to receive the segment number
+ * \param segment_tag Pointer to receive the segment tag
+ * \param x Pointer to receive the x coordinate
+ * \param y Pointer to receive the y coordinate
+ * \param z Pointer to receive the z coordinate
+ * \param length Pointer to receive the segment length
+ * \param charge_real Pointer to receive the real part of charge density (coulombs/meter)
+ * \param charge_imag Pointer to receive the imaginary part of charge density (coulombs/meter)
+ * \return 0 on success, non-zero on error
+ */
+long nec_get_charge(nec_context* in_context, int result_index, int element_index,
+                    int* segment_number, int* segment_tag,
+                    double* x, double* y, double* z, double* length,
+                    double* charge_real, double* charge_imag);
+
+///@}
+
+
+/** @name Near Field Data Access
+ * Functions for accessing near field pattern data after simulation
+ */
+///@{
+
+/*! \brief Get near field pattern result count
+ * \param in_context The nec_context
+ * \return The number of near field pattern results available
+ */
+int nec_get_near_field_count(nec_context* in_context);
+
+/*! \brief Get the number of near field points in a result
+ * \param in_context The nec_context
+ * \param result_index The result index (usually 0)
+ * \return The number of near field points, or -1 if result doesn't exist
+ */
+int nec_get_near_field_point_count(nec_context* in_context, int result_index);
+
+/*! \brief Get near field data for a specific point
+ * \param in_context The nec_context
+ * \param result_index The result index (usually 0)
+ * \param point_index The zero-based point index
+ * \param x Pointer to receive the x coordinate
+ * \param y Pointer to receive the y coordinate
+ * \param z Pointer to receive the z coordinate
+ * \param ex_real Pointer to receive the real part of Ex field
+ * \param ex_imag Pointer to receive the imaginary part of Ex field
+ * \param ey_real Pointer to receive the real part of Ey field
+ * \param ey_imag Pointer to receive the imaginary part of Ey field
+ * \param ez_real Pointer to receive the real part of Ez field
+ * \param ez_imag Pointer to receive the imaginary part of Ez field
+ * \return 0 on success, non-zero on error
+ */
+long nec_get_near_field_point(nec_context* in_context, int result_index, int point_index,
+                               double* x, double* y, double* z,
+                               double* ex_real, double* ex_imag,
+                               double* ey_real, double* ey_imag,
+                               double* ez_real, double* ez_imag);
 
 ///@}
 

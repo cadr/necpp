@@ -10,6 +10,7 @@ SOURCES = \
 	../src/c_ggrid.cpp \
 	../src/c_plot_card.cpp \
 	../src/libNEC.cpp \
+	../src/lib_getters.cpp \
 	../src/matrix_algebra.cpp \
 	misc_wasm.cpp \
 	../src/nec_context.cpp \
