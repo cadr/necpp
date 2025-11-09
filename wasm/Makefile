@@ -38,11 +38,12 @@ LDFLAGS = --bind \
 	-s MODULARIZE=1 \
 	-s EXPORT_NAME='createNecppModule' \
 	-s EXPORTED_RUNTIME_METHODS=['ccall','cwrap'] \
-	-s ENVIRONMENT='web,worker' \
+	-s ENVIRONMENT='web,worker,node' \
 	-s MAXIMUM_MEMORY=2GB \
 	-s STACK_SIZE=5MB \
 	-s ASSERTIONS=1 \
-	-s NO_FILESYSTEM=1
+	-s NO_FILESYSTEM=1 \
+	-s NO_DISABLE_EXCEPTION_CATCHING
 
 # Output
 OUTPUT = necpp.js
