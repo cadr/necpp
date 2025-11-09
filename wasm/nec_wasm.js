@@ -141,15 +141,16 @@ function parseNecFile(filename) {
         const card = parseCard(trimmed);
         if (!card) continue;
 
-        // GE marks the end of geometry
-        if (cardType === 'GE') {
-            inGeometry = false;
-        }
-
+        // Add card to appropriate section (GE should be in geometry)
         if (inGeometry) {
             cards.geometry.push(card);
         } else {
             cards.program.push(card);
+        }
+
+        // GE marks the end of geometry (check AFTER adding the card)
+        if (cardType === 'GE') {
+            inGeometry = false;
         }
     }
 
@@ -334,6 +335,18 @@ async function processNecFile(inputFile, outputFile) {
                         const errorMsg = nec.getErrorMessage();
                         if (errorMsg && errorMsg.length > 0) {
                             output.line(`  Warning: ${errorMsg}`);
+                        }
+
+                        // Print impedance results
+                        try {
+                            const zReal = nec.getImpedanceReal(freqIndex);
+                            const zImag = nec.getImpedanceImag(freqIndex);
+                            output.line();
+                            output.line('ANTENNA INPUT PARAMETERS');
+                            output.line(`  Impedance: ${zReal.toExponential(5)} + j${zImag.toExponential(5)} Ohms`);
+                            output.line(`  Impedance: ${zReal.toFixed(4)} + j${zImag.toFixed(4)} Ohms`);
+                        } catch (e) {
+                            // Results might not be available
                         }
                     } catch (e) {
                         output.line(`  XQ execution failed: ${e.message}`);
