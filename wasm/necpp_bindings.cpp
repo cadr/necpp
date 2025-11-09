@@ -88,6 +88,43 @@ public:
         nec_nt_card(ctx, itmp1, itmp2, itmp3, itmp4, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6);
     }
 
+    // Execute
+    void xq_card(int itmp1) {
+        nec_xq_card(ctx, itmp1);
+    }
+
+    // Extended kernel
+    void ek_card(int itmp1) {
+        nec_ek_card(ctx, itmp1);
+    }
+
+    // Kernel handling
+    void kh_card(double tmp1) {
+        nec_kh_card(ctx, tmp1);
+    }
+
+    // Ground description
+    void gd_card(double tmp1, double tmp2, double tmp3, double tmp4) {
+        nec_gd_card(ctx, tmp1, tmp2, tmp3, tmp4);
+    }
+
+    // Geometry move
+    void gm_card(int itsi, int nrpt, double rox, double roy, double roz,
+                 double xs, double ys, double zs, int its) {
+        nec_gm_card(ctx, itsi, nrpt, rox, roy, roz, xs, ys, zs, its);
+    }
+
+    // Surface continuation
+    void sc_card(int i2, double x3, double y3, double z3,
+                 double x4, double y4, double z4) {
+        nec_sc_card(ctx, i2, x3, y3, z3, x4, y4, z4);
+    }
+
+    // Medium parameters
+    void medium_parameters(double permittivity, double permeability) {
+        nec_medium_parameters(ctx, permittivity, permeability);
+    }
+
     // Radiation pattern
     void rp_card(int calc_mode, int n_theta, int n_phi,
                  int output_format, int normalization, int D, int A,
@@ -95,6 +132,35 @@ public:
                  double radial_distance, double gain_norm) {
         nec_rp_card(ctx, calc_mode, n_theta, n_phi, output_format, normalization, D, A,
                    theta0, phi0, delta_theta, delta_phi, radial_distance, gain_norm);
+    }
+
+    // Print current
+    void pt_card(int itmp1, int itmp2, int itmp3, int itmp4) {
+        nec_pt_card(ctx, itmp1, itmp2, itmp3, itmp4);
+    }
+
+    // Print charge
+    void pq_card(int itmp1, int itmp2, int itmp3, int itmp4) {
+        nec_pq_card(ctx, itmp1, itmp2, itmp3, itmp4);
+    }
+
+    // Near electric field
+    void ne_card(int itmp1, int itmp2, int itmp3, int itmp4,
+                 double tmp1, double tmp2, double tmp3, double tmp4,
+                 double tmp5, double tmp6) {
+        nec_ne_card(ctx, itmp1, itmp2, itmp3, itmp4, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6);
+    }
+
+    // Near magnetic field
+    void nh_card(int itmp1, int itmp2, int itmp3, int itmp4,
+                 double tmp1, double tmp2, double tmp3, double tmp4,
+                 double tmp5, double tmp6) {
+        nec_nh_card(ctx, itmp1, itmp2, itmp3, itmp4, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6);
+    }
+
+    // Coupling
+    void cp_card(int itmp1, int itmp2, int itmp3, int itmp4) {
+        nec_cp_card(ctx, itmp1, itmp2, itmp3, itmp4);
     }
 
     // Results retrieval
@@ -164,8 +230,44 @@ EMSCRIPTEN_BINDINGS(necpp_module) {
         // Network
         .function("ntCard", &NecppWrapper::nt_card)
 
+        // Execute
+        .function("xqCard", &NecppWrapper::xq_card)
+
+        // Extended kernel
+        .function("ekCard", &NecppWrapper::ek_card)
+
+        // Kernel handling
+        .function("khCard", &NecppWrapper::kh_card)
+
+        // Ground description
+        .function("gdCard", &NecppWrapper::gd_card)
+
+        // Geometry move
+        .function("gmCard", &NecppWrapper::gm_card)
+
+        // Surface continuation
+        .function("scCard", &NecppWrapper::sc_card)
+
+        // Medium parameters
+        .function("mediumParameters", &NecppWrapper::medium_parameters)
+
         // Radiation pattern
         .function("rpCard", &NecppWrapper::rp_card)
+
+        // Print current
+        .function("ptCard", &NecppWrapper::pt_card)
+
+        // Print charge
+        .function("pqCard", &NecppWrapper::pq_card)
+
+        // Near electric field
+        .function("neCard", &NecppWrapper::ne_card)
+
+        // Near magnetic field
+        .function("nhCard", &NecppWrapper::nh_card)
+
+        // Coupling
+        .function("cpCard", &NecppWrapper::cp_card)
 
         // Results
         .function("getGainMax", &NecppWrapper::get_gain_max)

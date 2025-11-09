@@ -29,6 +29,7 @@ INCLUDES = -I../src -I.
 CXXFLAGS = -O3 -std=c++11 -Wall -Wextra \
 	-DWITHOUT_LAPACK=1 \
 	-DNEC_ERROR_CHECK=1 \
+	-mnontrapping-fptoint \
 	$(INCLUDES)
 
 # Emscripten linker flags

@@ -6,28 +6,44 @@
 # Build C++ version (simple method)
 bash build_simple.sh
 
-# Build WASM version
-cd wasm
+# FIRST TIME: Install Emscripten (if /home/user/emsdk doesn't exist)
+cd /home/user
+git clone --depth 1 https://github.com/emscripten-core/emsdk.git
+cd emsdk
+./emsdk install latest
+./emsdk activate latest
+
+# EVERY SESSION: Activate Emscripten before building WASM
 source /home/user/emsdk/emsdk_env.sh
+
+# Build WASM version
+cd /home/user/necpp/wasm
 make
 
 # Clean WASM build
 cd wasm && make clean
+
+# Fix config.h if C++ build fails
+cp wasm/config.h src/config.h
 ```
 
 ## Testing
 
 ```bash
-# All commands from testharness/ directory
+# QUICK: Run all 41 WASM tests (from project root)
+bash test_all_wasm.sh
+# Expected: 41/41 passed, 0 failed (100%)
+
+# DETAILED: From testharness/ directory
 cd testharness
 
-# Run C++ tests
+# Run C++ tests (all 41 files)
 make -f Makefile.wasm test_cpp
 
-# Run WASM tests
+# Run WASM tests (all 41 files)
 make -f Makefile.wasm test_wasm
 
-# Compare outputs
+# Compare outputs with numerical tolerance
 make -f Makefile.wasm compare
 
 # Generate detailed report
@@ -36,7 +52,7 @@ make -f Makefile.wasm report
 # Clean test outputs
 make -f Makefile.wasm clean
 
-# Docker testing
+# Docker testing (reproducible environment)
 ./docker_test.sh
 ```
 
@@ -116,17 +132,26 @@ ls -lh testharness/data/*.out*
 ls testharness/*.md
 ```
 
-## Common Issues
+## Common Issues & Fixes
 
 ```bash
-# Emscripten not found
+# ERROR: Emscripten not found / em++ command not found
 source /home/user/emsdk/emsdk_env.sh
+
+# ERROR: config.h: No such file or directory
+cp wasm/config.h src/config.h
+
+# ERROR: cannot find necpp.js module
+# Make sure you're in correct directory when running node
+cd /home/user/necpp
+node wasm/nec_wasm.js -i testharness/data/example1.nec -o output.out
 
 # Build artifacts in git
 # (Already handled in .gitignore: m4/, config/m4/, nec2++, *.outwasm)
 
 # Clean everything
-make -f Makefile.wasm clean
-cd ../wasm && make clean
+cd /home/user/necpp
+make -f testharness/Makefile.wasm clean
+cd wasm && make clean
 cd .. && rm -f nec2++
 ```

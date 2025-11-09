@@ -31,23 +31,30 @@ echo "Docker image built successfully"
 echo ""
 
 # Run tests
-echo "Running tests..."
+echo "Running all tests in a single container..."
 echo ""
 
-# Test C++ version
-echo "1. Testing C++ version..."
-docker run --rm -v "$PROJECT_ROOT:/work" necpp-wasm make -f Makefile.wasm test_cpp
+docker run --rm necpp-wasm bash -c "
+    source /opt/emsdk/emsdk_env.sh
+    cd /work/testharness
 
-echo ""
-echo "2. Testing WASM version..."
-docker run --rm -v "$PROJECT_ROOT:/work" necpp-wasm bash -c "source /opt/emsdk/emsdk_env.sh && make -f Makefile.wasm test_wasm"
+    echo '1. Testing C++ version...'
+    echo ''
+    make -f Makefile.wasm test_cpp
 
-echo ""
-echo "3. Comparing outputs..."
-docker run --rm -v "$PROJECT_ROOT:/work" necpp-wasm bash -c "source /opt/emsdk/emsdk_env.sh && make -f Makefile.wasm compare"
+    echo ''
+    echo '2. Testing WASM version...'
+    echo ''
+    make -f Makefile.wasm test_wasm
+
+    echo ''
+    echo '3. Comparing outputs...'
+    echo ''
+    make -f Makefile.wasm compare
+"
 
 echo ""
 echo "✓ All tests complete"
 echo ""
 echo "To run tests manually in Docker:"
-echo "  docker run --rm -it -v $PROJECT_ROOT:/work necpp-wasm bash"
+echo "  docker run --rm -it necpp-wasm bash"
