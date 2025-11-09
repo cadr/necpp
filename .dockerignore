@@ -1,0 +1,101 @@
+# Git files
+.git
+.gitignore
+.gitmodules
+
+# Build artifacts (but not source files we need)
+*.o
+*.lo
+*.la
+*.so
+*.so.*
+*.a
+*.dylib
+*.exe
+.libs
+.deps
+
+# Autotools generated files
+autom4te.cache
+config.log
+config.status
+configure
+aclocal.m4
+compile
+depcomp
+install-sh
+libtool
+ltmain.sh
+missing
+stamp-h1
+config.h
+config.h.in
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+.Python
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Documentation build
+docs/_build/
+site/
+
+# Test files
+testharness/
+
+# Ruby
+Ruby/
+
+# Backup files
+*.bak
+*.orig
+
+# CI/CD
+.github
+.travis.yml
+.circleci
+
+# Project-specific files we don't need for Docker build
+example/
+python/
+win32/
+antlr/
+*.pdf
+*.txt
+AUTHORS
+ChangeLog
+COPYING
+INSTALL.md
+NEWS
+TODO
+
+# Keep these markdown files
+!wasm/README.md
+!wasm/QUICKSTART.md
+!wasm/*.md

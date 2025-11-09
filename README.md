@@ -24,9 +24,21 @@ If you use nec2++, please cite it as follows:
 Timothy C.A. Molteno, ''NEC2++: An NEC-2 compatible Numerical Electromagnetics Code'', Electronics Technical Reports No. 2014-3, ISSN 1172-496X, October
 2014.
 
+## WebAssembly Port (NEW!)
+
+NEC2++ can now run directly in your web browser! Try the interactive demo:
+
+```bash
+docker-compose up
+```
+
+Then open **http://localhost:8000** in your browser.
+
+No installation needed - just Docker! See [DOCKER.md](DOCKER.md) for details, or check the [wasm/](wasm/) directory for the complete WebAssembly port with JavaScript API bindings.
+
 ## Documentation
 
-Online documentation built form the source code is available at http://tmolteno.github.io/necpp/. 
+Online documentation built form the source code is available at http://tmolteno.github.io/necpp/.
 A guide to [using nec2++ from python](http://astroelec.blogspot.co.nz/2015/05/modeling-antennas-in-python-with-nec2.html).
 
 ## Installation
