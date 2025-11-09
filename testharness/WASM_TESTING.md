@@ -147,11 +147,17 @@ A Dockerfile is provided for reproducible builds:
 # Build Docker image
 docker build -t necpp-wasm -f testharness/Dockerfile .
 
-# Run tests in Docker
-docker run --rm -v $(pwd):/work necpp-wasm make -f Makefile.wasm test_cpp
+# Run C++ tests in Docker (outputs stay in container)
+docker run --rm necpp-wasm make -f Makefile.wasm test_cpp
+
+# Run WASM tests in Docker
+docker run --rm necpp-wasm make -f Makefile.wasm test_wasm
 
 # Run comparison
-docker run --rm -v $(pwd):/work necpp-wasm make -f Makefile.wasm compare
+docker run --rm necpp-wasm make -f Makefile.wasm compare
+
+# To copy test outputs to your host machine:
+docker run --rm necpp-wasm tar -czf - testharness/data/*.out* 2>/dev/null | tar -xzf -
 ```
 
 ### Docker Image Contents
