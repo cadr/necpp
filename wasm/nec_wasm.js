@@ -258,6 +258,33 @@ async function processNecFile(inputFile, outputFile) {
                 case 'GE': // Geometry complete
                     nec.geometryComplete(card.i1);
                     output.line('Geometry complete');
+
+                    // Output segmentation data
+                    try {
+                        const segCount = nec.getSegmentCount();
+                        if (segCount > 0) {
+                            output.line();
+                            output.section('                        - - - SEGMENTATION DATA - - -');
+                            output.line('  SEG.  COORDINATES OF SEG. CENTER     SEG.      ORIENTATION ANGLES    WIRE     CONNECTION DATA   TAG');
+                            output.line('  NO.      X         Y         Z       LENGTH    ALPHA     BETA      RADIUS    I-   I    I+  NO.');
+                            for (let i = 0; i < segCount; i++) {
+                                const seg = nec.getSegment(i);
+                                if (seg.success) {
+                                    const segNum = (i + 1).toString().padStart(5);
+                                    const x = seg.x.toExponential(5).padStart(11);
+                                    const y = seg.y.toExponential(5).padStart(11);
+                                    const z = seg.z.toExponential(5).padStart(11);
+                                    const len = seg.length.toExponential(5).padStart(11);
+                                    const alpha = seg.alpha.toFixed(2).padStart(9);
+                                    const beta = seg.beta.toFixed(2).padStart(9);
+                                    const rad = seg.radius.toExponential(5).padStart(11);
+                                    output.line(`${segNum}${x}${y}${z}${len}${alpha}${beta}${rad}     0    0    0   1`);
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        // Segment data not available
+                    }
                     break;
 
                 case 'GM': // Geometry move
@@ -356,15 +383,110 @@ async function processNecFile(inputFile, outputFile) {
 
                 case 'PT': // Print current
                     nec.ptCard(card.i1, card.i2, card.i3, card.i4);
+
+                    // Output current distribution
+                    try {
+                        const currCount = nec.getCurrentCount(0);
+                        if (currCount > 0) {
+                            output.line();
+                            output.section('                             - - - - STRUCTURE EXCITATION DATA AT NETWORK CONNECTION POINTS - - - -');
+                            output.line('  TAG   SEG       VOLTAGE (VOLTS)           CURRENT (AMPS)           IMPEDANCE (OHMS)          ADMITTANCE (MHOS)        POWER');
+                            output.line('  NO.   NO.      REAL      IMAGINARY      REAL      IMAGINARY      REAL      IMAGINARY      REAL      IMAGINARY   (WATTS)');
+
+                            output.line();
+                            output.section('                                  - - - ANTENNA INPUT PARAMETERS - - -');
+                            output.line('  TAG   SEG       VOLTAGE (VOLTS)           CURRENT (AMPS)           IMPEDANCE (OHMS)          ADMITTANCE (MHOS)        POWER');
+                            output.line('  NO.   NO.      REAL      IMAGINARY      REAL      IMAGINARY      REAL      IMAGINARY      REAL      IMAGINARY   (WATTS)');
+
+                            output.line();
+                            output.section('                                     - - - CURRENTS AND LOCATION - - -');
+                            output.line('                                  DISTANCES IN WAVELENGTHS');
+                            output.line('  SEG.   TAG     COORD. OF SEG. CENTER    SEG.         -----------  CURRENT (AMPS) -----------');
+                            output.line('  NO.    NO.       X         Y         Z    LENGTH     REAL      IMAGINARY     MAG.      PHASE');
+                            for (let i = 0; i < currCount; i++) {
+                                const curr = nec.getCurrent(0, i);
+                                if (curr.success) {
+                                    const segNum = curr.segmentNumber.toString().padStart(5);
+                                    const tag = curr.segmentTag.toString().padStart(5);
+                                    const x = curr.x.toFixed(5).padStart(11);
+                                    const y = curr.y.toFixed(5).padStart(11);
+                                    const z = curr.z.toFixed(5).padStart(11);
+                                    const len = curr.length.toFixed(5).padStart(11);
+                                    const re = curr.currentReal.toExponential(5).padStart(14);
+                                    const im = curr.currentImag.toExponential(5).padStart(14);
+                                    const mag = Math.sqrt(curr.currentReal**2 + curr.currentImag**2).toExponential(5).padStart(13);
+                                    const phase = (Math.atan2(curr.currentImag, curr.currentReal) * 180 / Math.PI).toFixed(2).padStart(10);
+                                    output.line(`${segNum}${tag}${x}${y}${z}${len}${re}${im}${mag}${phase}`);
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        // Current data not available
+                    }
                     break;
 
                 case 'PQ': // Print charge
                     nec.pqCard(card.i1, card.i2, card.i3, card.i4);
+
+                    // Output charge distribution
+                    try {
+                        const chargeCount = nec.getChargeCount(0);
+                        if (chargeCount > 0) {
+                            output.line();
+                            output.section('                                     - - - CHARGE DENSITIES - - -');
+                            output.line('                                  DISTANCES IN WAVELENGTHS');
+                            output.line('  SEG.   TAG     COORD. OF SEG. CENTER    SEG.      --------- CHARGE DENSITY (COULOMBS/METER) ---------');
+                            output.line('  NO.    NO.       X         Y         Z    LENGTH     REAL      IMAGINARY     MAG.      PHASE');
+                            for (let i = 0; i < chargeCount; i++) {
+                                const charge = nec.getCharge(0, i);
+                                if (charge.success) {
+                                    const segNum = charge.segmentNumber.toString().padStart(5);
+                                    const tag = charge.segmentTag.toString().padStart(5);
+                                    const x = charge.x.toFixed(5).padStart(11);
+                                    const y = charge.y.toFixed(5).padStart(11);
+                                    const z = charge.z.toFixed(5).padStart(11);
+                                    const len = charge.length.toFixed(5).padStart(11);
+                                    const re = charge.chargeReal.toExponential(5).padStart(14);
+                                    const im = charge.chargeImag.toExponential(5).padStart(14);
+                                    const mag = Math.sqrt(charge.chargeReal**2 + charge.chargeImag**2).toExponential(5).padStart(13);
+                                    const phase = (Math.atan2(charge.chargeImag, charge.chargeReal) * 180 / Math.PI).toFixed(2).padStart(10);
+                                    output.line(`${segNum}${tag}${x}${y}${z}${len}${re}${im}${mag}${phase}`);
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        // Charge data not available
+                    }
                     break;
 
                 case 'NE': // Near electric field
                     try {
                         nec.neCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
+
+                        // Output near electric field data
+                        const nfCount = nec.getNearFieldPointCount(0);
+                        if (nfCount > 0) {
+                            output.line();
+                            output.section('                                     - - - NEAR ELECTRIC FIELDS - - -');
+                            output.line('     ------- LOCATION -------     ------- EX ------    ------- EY ------    ------- EZ ------');
+                            output.line('      X         Y         Z       MAGNITUDE   PHASE    MAGNITUDE   PHASE    MAGNITUDE   PHASE');
+                            output.line('    METERS    METERS    METERS     VOLTS/M  DEGREES    VOLTS/M   DEGREES     VOLTS/M  DEGREES');
+                            for (let i = 0; i < nfCount; i++) {
+                                const nf = nec.getNearFieldPoint(0, i);
+                                if (nf.success) {
+                                    const x = nf.x.toFixed(4).padStart(10);
+                                    const y = nf.y.toFixed(4).padStart(10);
+                                    const z = nf.z.toFixed(4).padStart(10);
+                                    const exMag = Math.sqrt(nf.exReal**2 + nf.exImag**2).toExponential(4).padStart(12);
+                                    const exPhase = (Math.atan2(nf.exImag, nf.exReal) * 180 / Math.PI).toFixed(2).padStart(8);
+                                    const eyMag = Math.sqrt(nf.eyReal**2 + nf.eyImag**2).toExponential(4).padStart(12);
+                                    const eyPhase = (Math.atan2(nf.eyImag, nf.eyReal) * 180 / Math.PI).toFixed(2).padStart(8);
+                                    const ezMag = Math.sqrt(nf.ezReal**2 + nf.ezImag**2).toExponential(4).padStart(12);
+                                    const ezPhase = (Math.atan2(nf.ezImag, nf.ezReal) * 180 / Math.PI).toFixed(2).padStart(8);
+                                    output.line(` ${x}${y}${z}${exMag}${exPhase}${eyMag}${eyPhase}${ezMag}${ezPhase}`);
+                                }
+                            }
+                        }
                     } catch (e) {
                         output.line(`  NE card execution failed: ${e.message}`);
                         // Continue processing
@@ -374,6 +496,31 @@ async function processNecFile(inputFile, outputFile) {
                 case 'NH': // Near magnetic field
                     try {
                         nec.nhCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
+
+                        // Output near magnetic field data
+                        const nhCount = nec.getNearFieldPointCount(0);
+                        if (nhCount > 0) {
+                            output.line();
+                            output.section('                                     - - - NEAR MAGNETIC FIELDS - - -');
+                            output.line('     ------- LOCATION -------     ------- HX ------    ------- HY ------    ------- HZ ------');
+                            output.line('      X         Y         Z       MAGNITUDE   PHASE    MAGNITUDE   PHASE    MAGNITUDE   PHASE');
+                            output.line('    METERS    METERS    METERS      AMPS/M  DEGREES      AMPS/M  DEGREES      AMPS/M  DEGREES');
+                            for (let i = 0; i < nhCount; i++) {
+                                const nh = nec.getNearFieldPoint(0, i);
+                                if (nh.success) {
+                                    const x = nh.x.toFixed(4).padStart(10);
+                                    const y = nh.y.toFixed(4).padStart(10);
+                                    const z = nh.z.toFixed(4).padStart(10);
+                                    const hxMag = Math.sqrt(nh.exReal**2 + nh.exImag**2).toExponential(4).padStart(12);
+                                    const hxPhase = (Math.atan2(nh.exImag, nh.exReal) * 180 / Math.PI).toFixed(2).padStart(8);
+                                    const hyMag = Math.sqrt(nh.eyReal**2 + nh.eyImag**2).toExponential(4).padStart(12);
+                                    const hyPhase = (Math.atan2(nh.eyImag, nh.eyReal) * 180 / Math.PI).toFixed(2).padStart(8);
+                                    const hzMag = Math.sqrt(nh.ezReal**2 + nh.ezImag**2).toExponential(4).padStart(12);
+                                    const hzPhase = (Math.atan2(nh.ezImag, nh.ezReal) * 180 / Math.PI).toFixed(2).padStart(8);
+                                    output.line(` ${x}${y}${z}${hxMag}${hxPhase}${hyMag}${hyPhase}${hzMag}${hzPhase}`);
+                                }
+                            }
+                        }
                     } catch (e) {
                         output.line(`  NH card execution failed: ${e.message}`);
                         // Continue processing

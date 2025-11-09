@@ -264,11 +264,10 @@ long nec_cp_card(nec_context* in_context, int itmp1, int itmp2, int itmp3, int i
 }
 
 
-/* "pl" card, plot flags 
+/* "pl" card, plot flags
 	throws int on error.
 */
 long nec_pl_card(nec_context* in_context, char* ploutput_filename, int itmp1, int itmp2, int itmp3, int itmp4)
 {
   NEC_ERROR_HANDLE(in_context->pl_card(ploutput_filename, itmp1, itmp2, itmp3, itmp4));
 }
-

@@ -194,6 +194,121 @@ public:
         return nec_gain(ctx, freq_index, theta_index, phi_index);
     }
 
+    // Geometry data access
+    int get_segment_count() {
+        return nec_get_segment_count(ctx);
+    }
+
+    emscripten::val get_segment(int segment_index) {
+        double x, y, z, length, alpha, beta, radius;
+        long result = nec_get_segment(ctx, segment_index, &x, &y, &z, &length, &alpha, &beta, &radius);
+
+        auto obj = emscripten::val::object();
+        obj.set("success", result == 0);
+        if (result == 0) {
+            obj.set("x", x);
+            obj.set("y", y);
+            obj.set("z", z);
+            obj.set("length", length);
+            obj.set("alpha", alpha);
+            obj.set("beta", beta);
+            obj.set("radius", radius);
+        }
+        return obj;
+    }
+
+    // Current distribution access
+    int get_structure_currents_count() {
+        return nec_get_structure_currents_count(ctx);
+    }
+
+    int get_current_count(int result_index) {
+        return nec_get_current_count(ctx, result_index);
+    }
+
+    emscripten::val get_current(int result_index, int element_index) {
+        int segment_number, segment_tag;
+        double x, y, z, length, current_real, current_imag;
+        long result = nec_get_current(ctx, result_index, element_index,
+                                      &segment_number, &segment_tag,
+                                      &x, &y, &z, &length,
+                                      &current_real, &current_imag);
+
+        auto obj = emscripten::val::object();
+        obj.set("success", result == 0);
+        if (result == 0) {
+            obj.set("segmentNumber", segment_number);
+            obj.set("segmentTag", segment_tag);
+            obj.set("x", x);
+            obj.set("y", y);
+            obj.set("z", z);
+            obj.set("length", length);
+            obj.set("currentReal", current_real);
+            obj.set("currentImag", current_imag);
+        }
+        return obj;
+    }
+
+    int get_charge_count(int result_index) {
+        return nec_get_charge_count(ctx, result_index);
+    }
+
+    emscripten::val get_charge(int result_index, int element_index) {
+        int segment_number, segment_tag;
+        double x, y, z, length, charge_real, charge_imag;
+        long result = nec_get_charge(ctx, result_index, element_index,
+                                     &segment_number, &segment_tag,
+                                     &x, &y, &z, &length,
+                                     &charge_real, &charge_imag);
+
+        auto obj = emscripten::val::object();
+        obj.set("success", result == 0);
+        if (result == 0) {
+            obj.set("segmentNumber", segment_number);
+            obj.set("segmentTag", segment_tag);
+            obj.set("x", x);
+            obj.set("y", y);
+            obj.set("z", z);
+            obj.set("length", length);
+            obj.set("chargeReal", charge_real);
+            obj.set("chargeImag", charge_imag);
+        }
+        return obj;
+    }
+
+    // Near field data access
+    int get_near_field_count() {
+        return nec_get_near_field_count(ctx);
+    }
+
+    int get_near_field_point_count(int result_index) {
+        return nec_get_near_field_point_count(ctx, result_index);
+    }
+
+    emscripten::val get_near_field_point(int result_index, int point_index) {
+        double x, y, z, ex_real, ex_imag, ey_real, ey_imag, ez_real, ez_imag;
+        long result = nec_get_near_field_point(ctx, result_index, point_index,
+                                               &x, &y, &z,
+                                               &ex_real, &ex_imag,
+                                               &ey_real, &ey_imag,
+                                               &ez_real, &ez_imag);
+
+        auto obj = emscripten::val::object();
+        obj.set("success", result == 0);
+        if (result == 0) {
+            obj.set("x", x);
+            obj.set("y", y);
+            obj.set("z", z);
+            obj.set("exReal", ex_real);
+            obj.set("exImag", ex_imag);
+            obj.set("eyReal", ey_real);
+            obj.set("eyImag", ey_imag);
+            obj.set("ezReal", ez_real);
+            obj.set("ezImag", ez_imag);
+        }
+        return obj;
+    }
+
     // Error handling
     std::string get_error_message() {
         const char* msg = nec_error_message();
@@ -277,6 +392,22 @@ EMSCRIPTEN_BINDINGS(necpp_module) {
         .function("getImpedanceReal", &NecppWrapper::get_impedance_real)
         .function("getImpedanceImag", &NecppWrapper::get_impedance_imag)
         .function("getGain", &NecppWrapper::get_gain)
+
+        // Geometry data access
+        .function("getSegmentCount", &NecppWrapper::get_segment_count)
+        .function("getSegment", &NecppWrapper::get_segment)
+
+        // Current distribution access
+        .function("getStructureCurrentsCount", &NecppWrapper::get_structure_currents_count)
+        .function("getCurrentCount", &NecppWrapper::get_current_count)
+        .function("getCurrent", &NecppWrapper::get_current)
+        .function("getChargeCount", &NecppWrapper::get_charge_count)
+        .function("getCharge", &NecppWrapper::get_charge)
+
+        // Near field data access
+        .function("getNearFieldCount", &NecppWrapper::get_near_field_count)
+        .function("getNearFieldPointCount", &NecppWrapper::get_near_field_point_count)
+        .function("getNearFieldPoint", &NecppWrapper::get_near_field_point)
 
         // Error handling
         .function("getErrorMessage", &NecppWrapper::get_error_message);
