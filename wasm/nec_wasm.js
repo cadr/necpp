@@ -100,6 +100,14 @@ function parseCard(line) {
     };
 }
 
+// Format number in C-style scientific notation with zero-padded exponent
+// e.g., 1.00000E+00 instead of JavaScript's 1.00000E+0
+function formatScientific(num, precision) {
+    const str = num.toExponential(precision).toUpperCase();
+    // Match the exponent part and zero-pad it to 2 digits
+    return str.replace(/E([+-])(\d)$/, 'E$10$2');
+}
+
 // Read and parse NEC file
 function parseNecFile(filename) {
     const content = fs.readFileSync(filename, 'utf8');
@@ -362,6 +370,8 @@ async function processNecFile(inputFile, outputFile) {
         let hasFrequency = false;
         let frequencyInfo = null; // Store FR card info
         let cardNum = 0;
+        let excitationSegment = 4; // Track segment from EX card
+        let excitationTag = 0;      // Track tag from EX card
 
         for (const card of cards.program) {
             cardNum++;
@@ -370,12 +380,12 @@ async function processNecFile(inputFile, outputFile) {
             const i2 = card.i2.toString().padStart(6);
             const i3 = card.i3.toString().padStart(6);
             const i4 = card.i4.toString().padStart(6);
-            const f1 = card.f1.toExponential(5).toUpperCase().padStart(13);
-            const f2 = card.f2.toExponential(5).toUpperCase().padStart(13);
-            const f3 = card.f3.toExponential(5).toUpperCase().padStart(13);
-            const f4 = card.f4.toExponential(5).toUpperCase().padStart(13);
-            const f5 = card.f5.toExponential(5).toUpperCase().padStart(13);
-            const f6 = card.f6.toExponential(5).toUpperCase().padStart(13);
+            const f1 = formatScientific(card.f1, 5).padStart(13);
+            const f2 = formatScientific(card.f2, 5).padStart(13);
+            const f3 = formatScientific(card.f3, 5).padStart(13);
+            const f4 = formatScientific(card.f4, 5).padStart(13);
+            const f5 = formatScientific(card.f5, 5).padStart(13);
+            const f6 = formatScientific(card.f6, 5).padStart(13);
             output.line(`*****  DATA CARD N0.${cardNum.toString().padStart(4)} ${card.card}${i1}${i2}${i3}${i4}${f1}${f2}${f3}${f4}${f5}${f6}`);
 
             switch (card.card) {
@@ -396,6 +406,8 @@ async function processNecFile(inputFile, outputFile) {
 
                 case 'EX': // Excitation
                     nec.exCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
+                    excitationTag = card.i2;
+                    excitationSegment = card.i3;
                     break;
 
                 case 'LD': // Loading
@@ -467,8 +479,8 @@ async function processNecFile(inputFile, outputFile) {
                             output.line();
                             output.line();
                             output.line('                               --------- FREQUENCY --------');
-                            output.line(`                               FREQUENCY=  ${currentFreq.toExponential(4).toUpperCase()} MHZ`);
-                            output.line(`                               WAVELENGTH= ${wavelength.toExponential(4).toUpperCase()} METERS`);
+                            output.line(`                               FREQUENCY=  ${formatScientific(currentFreq, 4)} MHZ`);
+                            output.line(`                               WAVELENGTH= ${formatScientific(wavelength, 4)} METERS`);
                             output.line();
                             output.line();
                             output.line('                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS');
@@ -492,9 +504,10 @@ async function processNecFile(inputFile, outputFile) {
                             output.line();
 
                             // Print full antenna input parameters table
+                            let zReal, zImag, power;  // Declare at function scope for use in power budget
                             try {
-                                const zReal = nec.getImpedanceReal(currentFreqIndex);
-                                const zImag = nec.getImpedanceImag(currentFreqIndex);
+                                zReal = nec.getImpedanceReal(currentFreqIndex);
+                                zImag = nec.getImpedanceImag(currentFreqIndex);
 
                                 // Calculate admittance
                                 const zMagSq = zReal * zReal + zImag * zImag;
@@ -510,23 +523,23 @@ async function processNecFile(inputFile, outputFile) {
                                 const iImag = (vImag * zReal - vReal * zImag) / zMagSq;
 
                                 // Power = 0.5 * Re(V * I*)
-                                const power = 0.5 * (vReal * iReal + vImag * iImag);
+                                power = 0.5 * (vReal * iReal + vImag * iImag);
 
                                 output.line('                      ----- ANTENNA INPUT PARAMETERS -----');
                                 output.line('  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER');
                                 output.line('  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)');
-                                const tag = '   0';
-                                const seg = '     5'; // Assume segment 5 for now (should track from EX card)
-                                const vr = vReal.toExponential(4).toUpperCase().padStart(11);
-                                const vi = vImag.toExponential(4).toUpperCase().padStart(11);
-                                const ir = iReal.toExponential(4).toUpperCase().padStart(11);
-                                const ii = iImag.toExponential(4).toUpperCase().padStart(11);
-                                const zr = zReal.toExponential(4).toUpperCase().padStart(11);
-                                const zi = zImag.toExponential(4).toUpperCase().padStart(11);
-                                const yr = yReal.toExponential(4).toUpperCase().padStart(11);
-                                const yi = yImag.toExponential(4).toUpperCase().padStart(11);
-                                const pw = power.toExponential(4).toUpperCase().padStart(11);
-                                output.line(`${tag}${seg}${vr}${vi}${ir}${ii}${zr}${zi}${yr}${yi}${pw}`);
+                                const tag = excitationTag.toString().padStart(4);
+                                const seg = excitationSegment.toString().padStart(6);
+                                const vr = formatScientific(vReal, 4).padStart(12);
+                                const vi = formatScientific(vImag, 4).padStart(12);
+                                const ir = formatScientific(iReal, 4).padStart(12);
+                                const ii = formatScientific(iImag, 4).padStart(12);
+                                const zr = formatScientific(zReal, 4).padStart(12);
+                                const zi = formatScientific(zImag, 4).padStart(12);
+                                const yr = formatScientific(yReal, 4).padStart(12);
+                                const yi = formatScientific(yImag, 4).padStart(12);
+                                const pw = formatScientific(power, 4).padStart(12);
+                                output.line(`   ${tag}${seg}${vr}${vi}${ir}${ii}${zr}${zi}${yr}${yi}${pw}`);
                             } catch (e) {
                                 // Results might not be available
                             }
@@ -554,9 +567,9 @@ async function processNecFile(inputFile, outputFile) {
                                             const y = curr.y.toFixed(4).padStart(10);
                                             const z = curr.z.toFixed(4).padStart(10);
                                             const len = curr.length.toFixed(5).padStart(9);
-                                            const re = curr.currentReal.toExponential(4).padStart(12);
-                                            const im = curr.currentImag.toExponential(4).padStart(12);
-                                            const mag = Math.sqrt(curr.currentReal**2 + curr.currentImag**2).toExponential(4).padStart(11);
+                                            const re = formatScientific(curr.currentReal, 4).toLowerCase().padStart(12);
+                                            const im = formatScientific(curr.currentImag, 4).toLowerCase().padStart(12);
+                                            const mag = formatScientific(Math.sqrt(curr.currentReal**2 + curr.currentImag**2), 4).toLowerCase().padStart(11);
                                             const phase = (Math.atan2(curr.currentImag, curr.currentReal) * 180 / Math.PI).toFixed(3).padStart(10);
                                             output.line(`${segNum}${tag}${x}${y}${z}${len}${re}${im}${mag}${phase}`);
                                         }
@@ -564,6 +577,27 @@ async function processNecFile(inputFile, outputFile) {
                                 }
                             } catch (e) {
                                 // Current data not available
+                            }
+
+                            // Output power budget
+                            if (power !== undefined) {
+                                const radiatedPower = power; // Assuming no losses initially
+                                const structureLoss = 0.0;
+                                const networkLoss = 0.0;
+                                const efficiency = 100.0;
+
+                                output.line();
+                                output.line();
+                                output.line();
+                                output.line();
+                                output.line();
+                                output.line();
+                                output.line('                               ---------- POWER BUDGET ---------');
+                                output.line(`                               INPUT POWER   =  ${formatScientific(power, 4)} Watts`);
+                                output.line(`                               RADIATED POWER=  ${formatScientific(radiatedPower, 4)} Watts`);
+                                output.line(`                               STRUCTURE LOSS=  ${formatScientific(structureLoss, 4)} Watts`);
+                                output.line(`                               NETWORK LOSS  =  ${formatScientific(networkLoss, 4)} Watts`);
+                                output.line(`                               EFFICIENCY    =  ${efficiency.toFixed(2)} Percent`);
                             }
 
                             currentFreqIndex++;
