@@ -1,0 +1,8 @@
+# Only include the built files, not build artifacts
+# The dist directory should contain only distribution-ready files
+
+# Don't ignore the WASM files (override parent .gitignore)
+!necpp.js
+!necpp.wasm
+!*.js
+!*.wasm

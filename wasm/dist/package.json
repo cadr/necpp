@@ -1,0 +1,37 @@
+{
+  "name": "@necpp/wasm",
+  "version": "1.0.0",
+  "description": "NEC++ WebAssembly port for electromagnetic antenna simulation",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "necpp.js",
+    "necpp.wasm",
+    "index.js",
+    "index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "nec",
+    "nec++",
+    "electromagnetic",
+    "antenna",
+    "simulation",
+    "wasm",
+    "webassembly",
+    "rf",
+    "radio",
+    "method-of-moments"
+  ],
+  "author": "NEC++ Contributors",
+  "license": "GPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tmolteno/necpp.git",
+    "directory": "wasm"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

@@ -1,0 +1,14 @@
+This directory will contain the built WASM files after running:
+  npm run build:docker  (or: make)
+  ./prepare-dist.sh
+
+Required files:
+- necpp.js
+- necpp.wasm
+- index.js
+- index.d.ts
+- package.json
+- README.md
+- LICENSE
+
+See ../SETUP.md for instructions.

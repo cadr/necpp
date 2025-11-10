@@ -1,0 +1,43 @@
+{
+  "name": "@necpp/wasm",
+  "version": "1.0.0",
+  "description": "NEC++ WebAssembly port for electromagnetic antenna simulation",
+  "main": "dist/necpp.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bash build.sh",
+    "build:docker": "docker run --rm -v $(pwd)/..:/app -w /app/wasm emscripten/emsdk:3.1.50 make",
+    "prepare": "npm run build:docker || echo 'Build skipped - run npm run build manually'",
+    "test": "node test_build.js"
+  },
+  "keywords": [
+    "nec",
+    "nec++",
+    "electromagnetic",
+    "antenna",
+    "simulation",
+    "wasm",
+    "webassembly",
+    "rf",
+    "radio",
+    "method-of-moments"
+  ],
+  "author": "NEC++ Contributors",
+  "license": "GPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tmolteno/necpp.git",
+    "directory": "wasm"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "peerDependencies": {}
+}
