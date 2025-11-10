@@ -166,7 +166,7 @@ function parseNecFile(filename) {
 }
 
 // Helper function to output antenna input parameters
-function outputAntennaInput(nec, output, freqIndex, excitationTag, excitationSegment) {
+function outputAntennaInput(nec, output, freqIndex, excitationTag, excitationSegment, excitationVoltageReal, excitationVoltageImag) {
     try {
         const zReal = nec.getImpedanceReal(freqIndex);
         const zImag = nec.getImpedanceImag(freqIndex);
@@ -176,9 +176,9 @@ function outputAntennaInput(nec, output, freqIndex, excitationTag, excitationSeg
         const yReal = zReal / zMagSq;
         const yImag = -zImag / zMagSq;
 
-        // Assume voltage of 1+j0 for input
-        const vReal = 1.0;
-        const vImag = 0.0;
+        // Use actual voltage from excitation (default to 1+j0 if not specified)
+        const vReal = excitationVoltageReal !== undefined ? excitationVoltageReal : 1.0;
+        const vImag = excitationVoltageImag !== undefined ? excitationVoltageImag : 0.0;
 
         // Current = V / Z
         const iReal = (vReal * zReal + vImag * zImag) / zMagSq;
@@ -424,6 +424,8 @@ async function processNecFile(inputFile, outputFile) {
         let cardNum = 0;
         let excitationSegment = 4; // Track segment from EX card
         let excitationTag = 0;      // Track tag from EX card
+        let excitationVoltageReal = 1.0;  // Track voltage real part from EX card
+        let excitationVoltageImag = 0.0;  // Track voltage imag part from EX card
 
         for (const card of cards.program) {
             cardNum++;
@@ -460,6 +462,8 @@ async function processNecFile(inputFile, outputFile) {
                     nec.exCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
                     excitationTag = card.i2;
                     excitationSegment = card.i3;
+                    excitationVoltageReal = card.f1;
+                    excitationVoltageImag = card.f2;
                     break;
 
                 case 'LD': // Loading
@@ -709,7 +713,7 @@ async function processNecFile(inputFile, outputFile) {
                         nec.neCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
 
                         // Output antenna input parameters after execution
-                        outputAntennaInput(nec, output, 0, excitationTag, excitationSegment);
+                        outputAntennaInput(nec, output, 0, excitationTag, excitationSegment, excitationVoltageReal, excitationVoltageImag);
 
                         // NE card may trigger execution - output currents if available
                         try {
@@ -817,7 +821,7 @@ async function processNecFile(inputFile, outputFile) {
                         nec.nhCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
 
                         // Output antenna input parameters after execution
-                        outputAntennaInput(nec, output, 0, excitationTag, excitationSegment);
+                        outputAntennaInput(nec, output, 0, excitationTag, excitationSegment, excitationVoltageReal, excitationVoltageImag);
 
                         // Output near magnetic field data
                         const nhCount = nec.getNearFieldPointCount(0);
@@ -863,7 +867,7 @@ async function processNecFile(inputFile, outputFile) {
                                   card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
 
                         // Output antenna input parameters after execution
-                        outputAntennaInput(nec, output, freqIndex, excitationTag, excitationSegment);
+                        outputAntennaInput(nec, output, freqIndex, excitationTag, excitationSegment, excitationVoltageReal, excitationVoltageImag);
 
                         // Output radiation pattern in C++ format
                         try {
