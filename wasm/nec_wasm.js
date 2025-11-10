@@ -347,6 +347,17 @@ async function processNecFile(inputFile, outputFile) {
         output.line();
         output.line();
 
+        // Handle files with no program cards
+        if (cards.program.length === 0) {
+            output.line('  NOTE: No program cards found. Geometry defined only.');
+            output.line();
+            output.line('  TOTAL RUN TIME: 0 msec');
+            nec.delete();
+            fs.writeFileSync(outputFile, output.getOutput());
+            console.log(`Output written to: ${outputFile}`);
+            return 0;
+        }
+
         let freqIndex = 0;
         let hasFrequency = false;
         let frequencyInfo = null; // Store FR card info
