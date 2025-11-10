@@ -309,6 +309,53 @@ public:
         return obj;
     }
 
+    // Radiation pattern data access
+    int get_radiation_pattern_count() {
+        return nec_get_radiation_pattern_count(ctx);
+    }
+
+    int get_radiation_pattern_theta_count(int result_index) {
+        return nec_get_radiation_pattern_theta_count(ctx, result_index);
+    }
+
+    int get_radiation_pattern_phi_count(int result_index) {
+        return nec_get_radiation_pattern_phi_count(ctx, result_index);
+    }
+
+    emscripten::val get_radiation_pattern_data(int result_index, int theta_index, int phi_index) {
+        double theta, phi;
+        double power_vert, power_horiz, power_tot;
+        double axial_ratio, tilt;
+        int pol_sense;
+        double e_theta_mag, e_theta_phase, e_phi_mag, e_phi_phase;
+
+        long result = nec_get_radiation_pattern_data(ctx, result_index,
+                                                      theta_index, phi_index,
+                                                      &theta, &phi,
+                                                      &power_vert, &power_horiz, &power_tot,
+                                                      &axial_ratio, &tilt, &pol_sense,
+                                                      &e_theta_mag, &e_theta_phase,
+                                                      &e_phi_mag, &e_phi_phase);
+
+        auto obj = emscripten::val::object();
+        obj.set("success", result == 0);
+        if (result == 0) {
+            obj.set("theta", theta);
+            obj.set("phi", phi);
+            obj.set("powerVert", power_vert);
+            obj.set("powerHoriz", power_horiz);
+            obj.set("powerTot", power_tot);
+            obj.set("axialRatio", axial_ratio);
+            obj.set("tilt", tilt);
+            obj.set("polSense", pol_sense);
+            obj.set("eThetaMag", e_theta_mag);
+            obj.set("eThetaPhase", e_theta_phase);
+            obj.set("ePhiMag", e_phi_mag);
+            obj.set("ePhiPhase", e_phi_phase);
+        }
+        return obj;
+    }
+
     // Error handling
     std::string get_error_message() {
         const char* msg = nec_error_message();
@@ -408,6 +455,12 @@ EMSCRIPTEN_BINDINGS(necpp_module) {
         .function("getNearFieldCount", &NecppWrapper::get_near_field_count)
         .function("getNearFieldPointCount", &NecppWrapper::get_near_field_point_count)
         .function("getNearFieldPoint", &NecppWrapper::get_near_field_point)
+
+        // Radiation pattern data access
+        .function("getRadiationPatternCount", &NecppWrapper::get_radiation_pattern_count)
+        .function("getRadiationPatternThetaCount", &NecppWrapper::get_radiation_pattern_theta_count)
+        .function("getRadiationPatternPhiCount", &NecppWrapper::get_radiation_pattern_phi_count)
+        .function("getRadiationPatternData", &NecppWrapper::get_radiation_pattern_data)
 
         // Error handling
         .function("getErrorMessage", &NecppWrapper::get_error_message);
