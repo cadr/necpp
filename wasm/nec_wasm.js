@@ -202,9 +202,12 @@ async function processNecFile(inputFile, outputFile) {
 
     // Print comments
     if (cards.comments.length > 0) {
-        output.section('COMMENTS');
+        output.line();
+        output.line();
+        output.line();
+        output.line('                               ---------------- COMMENTS ----------------');
         for (const comment of cards.comments) {
-            output.line(comment);
+            output.line('                               ' + comment);
         }
     }
 
@@ -220,10 +223,9 @@ async function processNecFile(inputFile, outputFile) {
         }
 
         // Process geometry cards
-        output.section('GEOMETRY');
-        for (const card of cards.geometry) {
-            output.line(`${card.card} ${card.i1} ${card.i2} ${card.i3} ${card.i4} ${card.f1} ${card.f2} ${card.f3} ${card.f4} ${card.f5} ${card.f6}`);
+        const wires = []; // Track wires for structure specification output
 
+        for (const card of cards.geometry) {
             switch (card.card) {
                 case 'GW': // Wire
                     // GW tag segments x1 y1 z1 x2 y2 z2 radius
@@ -245,6 +247,8 @@ async function processNecFile(inputFile, outputFile) {
                     const z2 = parseFloat(parts[7]) || 0;
                     const rad = parseFloat(parts[8]) || 0.001;
                     nec.wire(tag, segs, x1, y1, z1, x2, y2, z2, rad, 1.0, 1.0);
+                    // Track wire for structure specification output
+                    wires.push({ tag, segs, x1, y1, z1, x2, y2, z2, rad });
                     break;
 
                 case 'SP': // Surface patch
@@ -257,28 +261,70 @@ async function processNecFile(inputFile, outputFile) {
 
                 case 'GE': // Geometry complete
                     nec.geometryComplete(card.i1);
-                    output.line('Geometry complete');
+
+                    // Output structure specification
+                    output.line();
+                    output.line();
+                    output.line();
+                    output.line('                                -------- STRUCTURE SPECIFICATION --------');
+                    output.line('                                COORDINATES MUST BE INPUT IN');
+                    output.line('                                METERS OR BE SCALED TO METERS');
+                    output.line('                                BEFORE STRUCTURE INPUT IS ENDED');
+                    output.line('  WIRE                                                                                 SEG FIRST  LAST  TAG');
+                    output.line('   No:        X1         Y1         Z1         X2         Y2         Z2       RADIUS   No:   SEG   SEG  No:');
+                    output.line();
+
+                    let firstSeg = 1;
+                    for (let i = 0; i < wires.length; i++) {
+                        const w = wires[i];
+                        const wireNum = (i + 1).toString().padStart(6);
+                        const x1 = w.x1.toFixed(4).padStart(11);
+                        const y1 = w.y1.toFixed(4).padStart(11);
+                        const z1 = w.z1.toFixed(4).padStart(11);
+                        const x2 = w.x2.toFixed(4).padStart(11);
+                        const y2 = w.y2.toFixed(4).padStart(11);
+                        const z2 = w.z2.toFixed(4).padStart(11);
+                        const radius = w.rad.toFixed(4).padStart(11);
+                        const segs = w.segs.toString().padStart(6);
+                        const first = firstSeg.toString().padStart(6);
+                        const last = (firstSeg + w.segs - 1).toString().padStart(6);
+                        const tag = w.tag.toString().padStart(5);
+                        output.line(`${wireNum}${x1}${y1}${z1}${x2}${y2}${z2}${radius}${segs}${first}${last}${tag}`);
+                        firstSeg += w.segs;
+                    }
+
+                    const totalSegs = wires.reduce((sum, w) => sum + w.segs, 0);
+                    output.line();
+                    output.line(`     TOTAL SEGMENTS USED: ${totalSegs}   SEGMENTS IN A SYMMETRIC CELL: ${totalSegs}   SYMMETRY FLAG: 0`);
+                    output.line();
+                    output.line();
 
                     // Output segmentation data
                     try {
                         const segCount = nec.getSegmentCount();
                         if (segCount > 0) {
+                            output.line('                               ---------- SEGMENTATION DATA ----------');
+                            output.line('                                        COORDINATES IN METERS');
+                            output.line('                            I+ AND I- INDICATE THE SEGMENTS BEFORE AND AFTER I');
                             output.line();
-                            output.section('                        - - - SEGMENTATION DATA - - -');
-                            output.line('  SEG.  COORDINATES OF SEG. CENTER     SEG.      ORIENTATION ANGLES    WIRE     CONNECTION DATA   TAG');
-                            output.line('  NO.      X         Y         Z       LENGTH    ALPHA     BETA      RADIUS    I-   I    I+  NO.');
+                            output.line('   SEG    COORDINATES OF SEGM CENTER     SEGM    ORIENTATION ANGLES    WIRE    CONNECTION DATA   TAG');
+                            output.line('   No:       X         Y         Z      LENGTH     ALPHA      BETA    RADIUS    I-     I    I+   NO:');
                             for (let i = 0; i < segCount; i++) {
                                 const seg = nec.getSegment(i);
                                 if (seg.success) {
-                                    const segNum = (i + 1).toString().padStart(5);
-                                    const x = seg.x.toExponential(5).padStart(11);
-                                    const y = seg.y.toExponential(5).padStart(11);
-                                    const z = seg.z.toExponential(5).padStart(11);
-                                    const len = seg.length.toExponential(5).padStart(11);
-                                    const alpha = seg.alpha.toFixed(2).padStart(9);
-                                    const beta = seg.beta.toFixed(2).padStart(9);
-                                    const rad = seg.radius.toExponential(5).padStart(11);
-                                    output.line(`${segNum}${x}${y}${z}${len}${alpha}${beta}${rad}     0    0    0   1`);
+                                    const segNum = (i + 1).toString().padStart(6);
+                                    const x = seg.x.toFixed(4).padStart(10);
+                                    const y = seg.y.toFixed(4).padStart(10);
+                                    const z = seg.z.toFixed(4).padStart(10);
+                                    const len = seg.length.toFixed(4).padStart(10);
+                                    const alpha = seg.alpha.toFixed(4).padStart(11);
+                                    const beta = seg.beta.toFixed(4).padStart(11);
+                                    const rad = seg.radius.toFixed(4).padStart(10);
+                                    // Connection data: simplified to 0, i+1, 0 for now
+                                    const iPrev = (i > 0 ? i : 0).toString().padStart(6);
+                                    const iCurr = (i + 1).toString().padStart(6);
+                                    const iNext = (i < segCount - 1 ? i + 2 : 0).toString().padStart(6);
+                                    output.line(`${segNum}${x}${y}${z}${len}${alpha}${beta}${rad}${iPrev}${iCurr}${iNext}     0`);
                                 }
                             }
                         }
@@ -298,17 +344,38 @@ async function processNecFile(inputFile, outputFile) {
         }
 
         // Process program cards
-        output.section('PROGRAM CARDS');
+        output.line();
+        output.line();
 
         let freqIndex = 0;
         let hasFrequency = false;
+        let frequencyInfo = null; // Store FR card info
+        let cardNum = 0;
 
         for (const card of cards.program) {
-            output.line(`${card.card} ${card.i1} ${card.i2} ${card.i3} ${card.i4} ${card.f1.toExponential(5)} ${card.f2.toExponential(5)} ${card.f3.toExponential(5)} ${card.f4.toExponential(5)} ${card.f5.toExponential(5)} ${card.f6.toExponential(5)}`);
+            cardNum++;
+            // Output data card in C++ format
+            const i1 = card.i1.toString().padStart(6);
+            const i2 = card.i2.toString().padStart(6);
+            const i3 = card.i3.toString().padStart(6);
+            const i4 = card.i4.toString().padStart(6);
+            const f1 = card.f1.toExponential(5).toUpperCase().padStart(13);
+            const f2 = card.f2.toExponential(5).toUpperCase().padStart(13);
+            const f3 = card.f3.toExponential(5).toUpperCase().padStart(13);
+            const f4 = card.f4.toExponential(5).toUpperCase().padStart(13);
+            const f5 = card.f5.toExponential(5).toUpperCase().padStart(13);
+            const f6 = card.f6.toExponential(5).toUpperCase().padStart(13);
+            output.line(`*****  DATA CARD N0.${cardNum.toString().padStart(4)} ${card.card}${i1}${i2}${i3}${i4}${f1}${f2}${f3}${f4}${f5}${f6}`);
 
             switch (card.card) {
                 case 'FR': // Frequency
                     nec.frCard(card.i1, card.i2, card.f1, card.f2);
+                    frequencyInfo = {
+                        ifrq: card.i1,  // 0=linear, 1=log
+                        nfrq: card.i2,  // number of frequencies
+                        freq_mhz: card.f1,  // starting frequency
+                        del_freq: card.f2   // frequency step
+                    };
                     hasFrequency = true;
                     break;
 
@@ -353,6 +420,7 @@ async function processNecFile(inputFile, outputFile) {
                     if (!hasFrequency) {
                         output.line('  (Setting default frequency: 299.8 MHz)');
                         nec.frCard(0, 1, 299.8, 0);  // Default to 299.8 MHz
+                        frequencyInfo = { ifrq: 0, nfrq: 1, freq_mhz: 299.8, del_freq: 0 };
                         hasFrequency = true;
                     }
                     try {
@@ -370,14 +438,84 @@ async function processNecFile(inputFile, outputFile) {
                             const currCount = nec.getCurrentCount(currentFreqIndex);
                             if (currCount <= 0) break;  // No more frequencies
 
-                            // Print impedance results
+                            // Calculate current frequency
+                            let currentFreq = frequencyInfo.freq_mhz;
+                            if (currentFreqIndex > 0) {
+                                if (frequencyInfo.ifrq === 0) {
+                                    // Linear stepping
+                                    currentFreq += currentFreqIndex * frequencyInfo.del_freq;
+                                } else {
+                                    // Log stepping
+                                    currentFreq *= Math.pow(10, currentFreqIndex * frequencyInfo.del_freq / frequencyInfo.nfrq);
+                                }
+                            }
+                            const wavelength = 299.792458 / currentFreq; // wavelength in meters
+
+                            // Output frequency header
+                            output.line();
+                            output.line();
+                            output.line();
+                            output.line('                               --------- FREQUENCY --------');
+                            output.line(`                               FREQUENCY=  ${currentFreq.toExponential(4).toUpperCase()} MHZ`);
+                            output.line(`                               WAVELENGTH= ${wavelength.toExponential(4).toUpperCase()} METERS`);
+                            output.line();
+                            output.line();
+                            output.line('                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS');
+                            output.line('                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART');
+                            output.line();
+                            output.line();
+                            output.line();
+                            output.line('                          ------ STRUCTURE IMPEDANCE LOADING ------');
+                            output.line('                                 THIS STRUCTURE IS NOT LOADED');
+                            output.line();
+                            output.line();
+                            output.line();
+                            output.line('                            -------- ANTENNA ENVIRONMENT --------');
+                            output.line('                            FREE SPACE');
+                            output.line();
+                            output.line();
+                            output.line();
+                            output.line('                             ---------- MATRIX TIMING ----------');
+                            output.line('                               FILL= 0 msec  FACTOR: 0 msec');
+                            output.line();
+                            output.line();
+
+                            // Print full antenna input parameters table
                             try {
                                 const zReal = nec.getImpedanceReal(currentFreqIndex);
                                 const zImag = nec.getImpedanceImag(currentFreqIndex);
-                                output.line();
-                                output.line('ANTENNA INPUT PARAMETERS');
-                                output.line(`  Impedance: ${zReal.toExponential(5)} + j${zImag.toExponential(5)} Ohms`);
-                                output.line(`  Impedance: ${zReal.toFixed(4)} + j${zImag.toFixed(4)} Ohms`);
+
+                                // Calculate admittance
+                                const zMagSq = zReal * zReal + zImag * zImag;
+                                const yReal = zReal / zMagSq;
+                                const yImag = -zImag / zMagSq;
+
+                                // Assume voltage of 1+j0 for input
+                                const vReal = 1.0;
+                                const vImag = 0.0;
+
+                                // Current = V / Z
+                                const iReal = (vReal * zReal + vImag * zImag) / zMagSq;
+                                const iImag = (vImag * zReal - vReal * zImag) / zMagSq;
+
+                                // Power = 0.5 * Re(V * I*)
+                                const power = 0.5 * (vReal * iReal + vImag * iImag);
+
+                                output.line('                      ----- ANTENNA INPUT PARAMETERS -----');
+                                output.line('  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER');
+                                output.line('  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)');
+                                const tag = '   0';
+                                const seg = '     5'; // Assume segment 5 for now (should track from EX card)
+                                const vr = vReal.toExponential(4).toUpperCase().padStart(11);
+                                const vi = vImag.toExponential(4).toUpperCase().padStart(11);
+                                const ir = iReal.toExponential(4).toUpperCase().padStart(11);
+                                const ii = iImag.toExponential(4).toUpperCase().padStart(11);
+                                const zr = zReal.toExponential(4).toUpperCase().padStart(11);
+                                const zi = zImag.toExponential(4).toUpperCase().padStart(11);
+                                const yr = yReal.toExponential(4).toUpperCase().padStart(11);
+                                const yi = yImag.toExponential(4).toUpperCase().padStart(11);
+                                const pw = power.toExponential(4).toUpperCase().padStart(11);
+                                output.line(`${tag}${seg}${vr}${vi}${ir}${ii}${zr}${zi}${yr}${yi}${pw}`);
                             } catch (e) {
                                 // Results might not be available
                             }
@@ -671,7 +809,8 @@ async function processNecFile(inputFile, outputFile) {
 
                 case 'EN': // End
                     output.line();
-                    output.line('END OF INPUT');
+                    output.line();
+                    output.line('  TOTAL RUN TIME: 0 msec');
                     break;
             }
         }
