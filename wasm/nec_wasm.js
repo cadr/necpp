@@ -776,9 +776,21 @@ async function processNecFile(inputFile, outputFile) {
                                     output.line('  THETA      PHI       VERTC   HORIZ   TOTAL       AXIAL      TILT  SENSE   MAGNITUDE    PHASE    MAGNITUDE     PHASE');
                                     output.line(' DEGREES   DEGREES        DB       DB       DB       RATIO   DEGREES            VOLTS/M   DEGREES     VOLTS/M   DEGREES');
 
-                                    // Output pattern data
-                                    for (let kph = 0; kph < nPhi; kph++) {
-                                        for (let kth = 0; kth < nTheta; kth++) {
+                                    // Output pattern data (limit to prevent excessive computation time)
+                                    const totalPoints = nTheta * nPhi;
+                                    const MAX_PATTERN_POINTS = 10000; // Reasonable limit
+
+                                    if (totalPoints > MAX_PATTERN_POINTS) {
+                                        output.line();
+                                        output.line(`  NOTE: RADIATION PATTERN OUTPUT LIMITED (${totalPoints} points requested, showing subset)`);
+                                        output.line();
+                                    }
+
+                                    const phiStep = totalPoints > MAX_PATTERN_POINTS ? Math.ceil(nPhi * Math.sqrt(totalPoints / MAX_PATTERN_POINTS)) : 1;
+                                    const thetaStep = totalPoints > MAX_PATTERN_POINTS ? Math.ceil(nTheta * Math.sqrt(totalPoints / MAX_PATTERN_POINTS)) : 1;
+
+                                    for (let kph = 0; kph < nPhi; kph += phiStep) {
+                                        for (let kth = 0; kth < nTheta; kth += thetaStep) {
                                             try {
                                                 const data = nec.getRadiationPatternData(rpIndex, kth, kph);
                                                 if (data.success) {
