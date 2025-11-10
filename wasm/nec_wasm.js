@@ -165,6 +165,58 @@ function parseNecFile(filename) {
     return cards;
 }
 
+// Helper function to output antenna input parameters
+function outputAntennaInput(nec, output, freqIndex, excitationTag, excitationSegment) {
+    try {
+        const zReal = nec.getImpedanceReal(freqIndex);
+        const zImag = nec.getImpedanceImag(freqIndex);
+
+        // Calculate admittance
+        const zMagSq = zReal * zReal + zImag * zImag;
+        const yReal = zReal / zMagSq;
+        const yImag = -zImag / zMagSq;
+
+        // Assume voltage of 1+j0 for input
+        const vReal = 1.0;
+        const vImag = 0.0;
+
+        // Current = V / Z
+        const iReal = (vReal * zReal + vImag * zImag) / zMagSq;
+        const iImag = (vImag * zReal - vReal * zImag) / zMagSq;
+
+        // Power = 0.5 * Re(V * I*)
+        const power = 0.5 * (vReal * iReal + vImag * iImag);
+
+        output.line();
+        output.line();
+        output.line('                             ---------- MATRIX TIMING ----------');
+        output.line('                               FILL= 0 msec  FACTOR: 0 msec');
+        output.line();
+        output.line();
+        output.line('                      ----- ANTENNA INPUT PARAMETERS -----');
+        output.line('  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER');
+        output.line('  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)');
+
+        const tag = excitationTag.toString().padStart(4);
+        const seg = excitationSegment.toString().padStart(6);
+        const vr = formatScientific(vReal, 4).padStart(12);
+        const vi = formatScientific(vImag, 4).padStart(12);
+        const ir = formatScientific(iReal, 4).padStart(12);
+        const ii = formatScientific(iImag, 4).padStart(12);
+        const zr = formatScientific(zReal, 4).padStart(12);
+        const zi = formatScientific(zImag, 4).padStart(12);
+        const yr = formatScientific(yReal, 4).padStart(12);
+        const yi = formatScientific(yImag, 4).padStart(12);
+        const pw = formatScientific(power, 4).padStart(12);
+        output.line(`   ${tag}${seg}${vr}${vi}${ir}${ii}${zr}${zi}${yr}${yi}${pw}`);
+
+        return true;
+    } catch (e) {
+        // Results might not be available
+        return false;
+    }
+}
+
 // Format output to match NEC++ format
 class OutputFormatter {
     constructor() {
@@ -656,6 +708,9 @@ async function processNecFile(inputFile, outputFile) {
                     try {
                         nec.neCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
 
+                        // Output antenna input parameters after execution
+                        outputAntennaInput(nec, output, 0, excitationTag, excitationSegment);
+
                         // NE card may trigger execution - output currents if available
                         try {
                             const currCount = nec.getCurrentCount(0);
@@ -761,6 +816,9 @@ async function processNecFile(inputFile, outputFile) {
                     try {
                         nec.nhCard(card.i1, card.i2, card.i3, card.i4, card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
 
+                        // Output antenna input parameters after execution
+                        outputAntennaInput(nec, output, 0, excitationTag, excitationSegment);
+
                         // Output near magnetic field data
                         const nhCount = nec.getNearFieldPointCount(0);
                         if (nhCount > 0) {
@@ -803,6 +861,9 @@ async function processNecFile(inputFile, outputFile) {
                                   Math.floor((card.i4 / 10) % 10),      // D
                                   card.i4 % 10,                          // A
                                   card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
+
+                        // Output antenna input parameters after execution
+                        outputAntennaInput(nec, output, freqIndex, excitationTag, excitationSegment);
 
                         // Output radiation pattern in C++ format
                         try {
