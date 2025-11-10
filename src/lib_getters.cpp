@@ -5,7 +5,9 @@
 #include "nec_context.h"
 #include "c_geometry.h"
 #include "nec_exception.h"
+#include "nec_radiation_pattern.h"
 #include <string>
+#include <cmath>
 
 // Import the error message from libNEC.cpp
 namespace {
@@ -231,6 +233,108 @@ long nec_get_near_field_point(nec_context* in_context, int result_index, int poi
     if (ey_imag) *ey_imag = field_y[point_index].imag();
     if (ez_real) *ez_real = field_z[point_index].real();
     if (ez_imag) *ez_imag = field_z[point_index].imag();
+
+    return 0;
+  } catch (nec_exception* _ex) {
+    return 1;
+  }
+}
+
+
+/*! Radiation pattern data access functions */
+
+int nec_get_radiation_pattern_count(nec_context* in_context) {
+  int count = 0;
+  while (in_context->get_radiation_pattern(count) != NULL) {
+    count++;
+  }
+  return count;
+}
+
+int nec_get_radiation_pattern_theta_count(nec_context* in_context, int result_index) {
+  nec_radiation_pattern* rp = in_context->get_radiation_pattern(result_index);
+  if (!rp) return -1;
+  return rp->get_ntheta();
+}
+
+int nec_get_radiation_pattern_phi_count(nec_context* in_context, int result_index) {
+  nec_radiation_pattern* rp = in_context->get_radiation_pattern(result_index);
+  if (!rp) return -1;
+  return rp->get_nphi();
+}
+
+long nec_get_radiation_pattern_data(nec_context* in_context, int result_index,
+                                     int theta_index, int phi_index,
+                                     double* theta, double* phi,
+                                     double* power_vert, double* power_horiz, double* power_tot,
+                                     double* axial_ratio, double* tilt, int* pol_sense,
+                                     double* e_theta_mag, double* e_theta_phase,
+                                     double* e_phi_mag, double* e_phi_phase) {
+  try {
+    nec_radiation_pattern* rp = in_context->get_radiation_pattern(result_index);
+    if (!rp) {
+      return 1;
+    }
+
+    int n_theta = rp->get_ntheta();
+    int n_phi = rp->get_nphi();
+
+    if (theta_index < 0 || theta_index >= n_theta ||
+        phi_index < 0 || phi_index >= n_phi) {
+      return 1;
+    }
+
+    // Calculate theta and phi values
+    if (theta) {
+      *theta = rp->get_theta_start() + theta_index * rp->get_delta_theta();
+    }
+    if (phi) {
+      *phi = rp->get_phi_start() + phi_index * rp->get_delta_phi();
+    }
+
+    // Get power gains
+    if (power_vert) {
+      *power_vert = rp->get_power_gain_vert(theta_index, phi_index);
+    }
+    if (power_horiz) {
+      *power_horiz = rp->get_power_gain_horiz(theta_index, phi_index);
+    }
+    if (power_tot) {
+      *power_tot = rp->get_power_gain_tot(theta_index, phi_index);
+    }
+
+    // Get polarization data
+    if (axial_ratio) {
+      *axial_ratio = rp->get_pol_axial_ratio(theta_index, phi_index);
+    }
+    if (tilt) {
+      real_array tilt_array = rp->get_pol_tilt();
+      *tilt = tilt_array(theta_index, phi_index);
+    }
+    if (pol_sense) {
+      int_array pol_sense_array = rp->get_pol_sense_index();
+      *pol_sense = pol_sense_array(theta_index, phi_index);
+    }
+
+    // Get electric field components
+    complex_array e_theta_array = rp->get_e_theta();
+    complex_array e_phi_array = rp->get_e_phi();
+
+    nec_complex e_theta = e_theta_array(theta_index, phi_index);
+    nec_complex e_phi = e_phi_array(theta_index, phi_index);
+
+    if (e_theta_mag) {
+      *e_theta_mag = abs(e_theta);
+    }
+    if (e_theta_phase) {
+      *e_theta_phase = arg_degrees(e_theta);
+    }
+    if (e_phi_mag) {
+      *e_phi_mag = abs(e_phi);
+    }
+    if (e_phi_phase) {
+      *e_phi_phase = arg_degrees(e_phi);
+    }
 
     return 0;
   } catch (nec_exception* _ex) {

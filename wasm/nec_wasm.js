@@ -759,39 +759,61 @@ async function processNecFile(inputFile, outputFile) {
                                   card.i4 % 10,                          // A
                                   card.f1, card.f2, card.f3, card.f4, card.f5, card.f6);
 
-                        // Get and print results
+                        // Output radiation pattern in C++ format
                         try {
-                            output.line();
-                            output.line('RADIATION PATTERN RESULTS:');
-                            const gainMax = nec.getGainMax(freqIndex);
-                            const gainMin = nec.getGainMin(freqIndex);
-                            const gainMean = nec.getGainMean(freqIndex);
-                            const gainSd = nec.getGainSd(freqIndex);
-                            const zReal = nec.getImpedanceReal(freqIndex);
-                            const zImag = nec.getImpedanceImag(freqIndex);
+                            const rpCount = nec.getRadiationPatternCount();
+                            if (rpCount > 0) {
+                                const rpIndex = freqIndex; // Use current frequency index
+                                const nTheta = nec.getRadiationPatternThetaCount(rpIndex);
+                                const nPhi = nec.getRadiationPatternPhiCount(rpIndex);
 
-                            output.line(`  Maximum Gain:        ${gainMax.toFixed(4)} dBi`);
-                            output.line(`  Minimum Gain:        ${gainMin.toFixed(4)} dBi`);
-                            output.line(`  Mean Gain:           ${gainMean.toFixed(4)} dBi`);
-                            output.line(`  Gain Std Dev:        ${gainSd.toFixed(4)} dB`);
-                            output.line(`  Impedance:           ${zReal.toFixed(4)} + j${zImag.toFixed(4)} Ohms`);
+                                if (nTheta > 0 && nPhi > 0) {
+                                    output.line();
+                                    output.line();
+                                    output.line();
+                                    output.line('                               ------------ RADIATION PATTERNS ------------');
+                                    output.line(' ---- ANGLES -----     --- DIRECTIVE GAINS ---      ---- POLARIZATION ----   ---- E(THETA) ----    ----- E(PHI) ------');
+                                    output.line('  THETA      PHI       VERTC   HORIZ   TOTAL       AXIAL      TILT  SENSE   MAGNITUDE    PHASE    MAGNITUDE     PHASE');
+                                    output.line(' DEGREES   DEGREES        DB       DB       DB       RATIO   DEGREES            VOLTS/M   DEGREES     VOLTS/M   DEGREES');
 
-                            // Try to get pattern data points
-                            const nTheta = card.i2;
-                            const nPhi = card.i3;
+                                    // Output pattern data
+                                    for (let kph = 0; kph < nPhi; kph++) {
+                                        for (let kth = 0; kth < nTheta; kth++) {
+                                            try {
+                                                const data = nec.getRadiationPatternData(rpIndex, kth, kph);
+                                                if (data.success) {
+                                                    const polSenseStr = ['LINEAR', 'RIGHT ', 'LEFT  ', '      '][data.polSense] || 'LINEAR';
 
-                            if (nTheta > 0 && nPhi > 0) {
-                                output.line();
-                                output.line('  PATTERN DATA (theta, phi, gain):');
-                                for (let t = 0; t < Math.min(nTheta, 5); t++) {
-                                    for (let p = 0; p < Math.min(nPhi, 3); p++) {
+                                                    const theta = data.theta.toFixed(2).padStart(7);
+                                                    const phi = data.phi.toFixed(2).padStart(9);
+                                                    const pv = data.powerVert.toFixed(2).padStart(8);
+                                                    const ph = data.powerHoriz.toFixed(2).padStart(8);
+                                                    const pt = data.powerTot.toFixed(2).padStart(8);
+                                                    const ar = data.axialRatio.toFixed(4).padStart(11);
+                                                    const tilt = data.tilt.toFixed(2).padStart(9);
+                                                    const sense = polSenseStr.padStart(6);
+                                                    const etm = data.eThetaMag.toFixed(4).padStart(11);
+                                                    const etp = data.eThetaPhase.toFixed(2).padStart(9);
+                                                    const epm = data.ePhiMag.toFixed(4).padStart(11);
+                                                    const epp = data.ePhiPhase.toFixed(2).padStart(9);
+
+                                                    output.line(` ${theta}${phi}${pv}${ph}${pt}${ar}${tilt}${sense}${etm}${etp}${epm}${epp}`);
+                                                }
+                                            } catch (e) {
+                                                // Skip this point if data not available
+                                            }
+                                        }
+                                    }
+
+                                    // Output average gain if requested
+                                    const iavp = card.i4 % 10; // A parameter
+                                    if (iavp !== 0) {
+                                        output.line();
                                         try {
-                                            const gain = nec.getGain(freqIndex, t, p);
-                                            const theta = card.f1 + t * card.f3;
-                                            const phi = card.f2 + p * card.f4;
-                                            output.line(`    ${theta.toFixed(1)}° ${phi.toFixed(1)}° ${gain.toFixed(4)} dBi`);
+                                            const avgGain = nec.getGainMean(rpIndex);
+                                            output.line(`  AVERAGE POWER GAIN:  ${avgGain.toFixed(4)}    - SOLID ANGLE USED IN AVERAGING: (UNKNOWN)*PI STERADIANS`);
                                         } catch (e) {
-                                            // Silently ignore if gain data not available
+                                            // Average gain not available
                                         }
                                     }
                                 }
@@ -799,7 +821,7 @@ async function processNecFile(inputFile, outputFile) {
 
                             freqIndex++;
                         } catch (e) {
-                            output.line(`  Error retrieving results: ${e.message}`);
+                            output.line(`  Error retrieving radiation pattern: ${e.message}`);
                         }
                     } catch (e) {
                         output.line(`  RP card execution failed: ${e.message}`);

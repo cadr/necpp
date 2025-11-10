@@ -589,13 +589,68 @@ double nec_gain_lhcp_min(nec_context* in_context, int freq_index);
 double nec_gain_lhcp_mean(nec_context* in_context, int freq_index);
 double nec_gain_lhcp_sd(nec_context* in_context, int freq_index);
 
-/*! \brief Impedance: Real Part 
+/*! \brief Impedance: Real Part
  */
 double nec_impedance_real(nec_context* in_context, int freq_index);
 
 /*! \brief Impedance: Imaginary Part
  */
 double nec_impedance_imag(nec_context* in_context, int freq_index);
+
+///@}
+
+
+/** @name Radiation Pattern Data Access
+ * Functions for accessing detailed radiation pattern data
+ */
+///@{
+
+/*! \brief Get the number of radiation patterns
+ * \param in_context The nec_context
+ * \return The number of radiation patterns available
+ */
+int nec_get_radiation_pattern_count(nec_context* in_context);
+
+/*! \brief Get the number of theta angles in a radiation pattern
+ * \param in_context The nec_context
+ * \param result_index The pattern index (usually 0)
+ * \return The number of theta angles, or -1 if pattern doesn't exist
+ */
+int nec_get_radiation_pattern_theta_count(nec_context* in_context, int result_index);
+
+/*! \brief Get the number of phi angles in a radiation pattern
+ * \param in_context The nec_context
+ * \param result_index The pattern index (usually 0)
+ * \return The number of phi angles, or -1 if pattern doesn't exist
+ */
+int nec_get_radiation_pattern_phi_count(nec_context* in_context, int result_index);
+
+/*! \brief Get detailed radiation pattern data for a specific angle
+ * \param in_context The nec_context
+ * \param result_index The pattern index (usually 0)
+ * \param theta_index The theta angle index (0-based)
+ * \param phi_index The phi angle index (0-based)
+ * \param theta Pointer to receive theta angle in degrees (can be NULL)
+ * \param phi Pointer to receive phi angle in degrees (can be NULL)
+ * \param power_vert Pointer to receive vertical power gain in dB (can be NULL)
+ * \param power_horiz Pointer to receive horizontal power gain in dB (can be NULL)
+ * \param power_tot Pointer to receive total power gain in dB (can be NULL)
+ * \param axial_ratio Pointer to receive polarization axial ratio (can be NULL)
+ * \param tilt Pointer to receive polarization tilt angle in degrees (can be NULL)
+ * \param pol_sense Pointer to receive polarization sense index (0=linear, 1=RHCP, 2=LHCP) (can be NULL)
+ * \param e_theta_mag Pointer to receive E_theta magnitude in V/m (can be NULL)
+ * \param e_theta_phase Pointer to receive E_theta phase in degrees (can be NULL)
+ * \param e_phi_mag Pointer to receive E_phi magnitude in V/m (can be NULL)
+ * \param e_phi_phase Pointer to receive E_phi phase in degrees (can be NULL)
+ * \return 0 on success, non-zero on error
+ */
+long nec_get_radiation_pattern_data(nec_context* in_context, int result_index,
+                                     int theta_index, int phi_index,
+                                     double* theta, double* phi,
+                                     double* power_vert, double* power_horiz, double* power_tot,
+                                     double* axial_ratio, double* tilt, int* pol_sense,
+                                     double* e_theta_mag, double* e_theta_phase,
+                                     double* e_phi_mag, double* e_phi_phase);
 
 ///@}
 
