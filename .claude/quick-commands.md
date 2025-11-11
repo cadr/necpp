@@ -1,30 +1,26 @@
 # Quick Command Reference
 
+## Environment: Claude Code on Web
+
+**Available:** ✅ C++ compiler, Node.js, Python 3, make, bash
+**NOT Available:** ❌ Docker, Emscripten SDK, Fortran
+
 ## Building
 
 ```bash
-# Build C++ version (simple method)
+# ALWAYS DO THIS FIRST (before any C++ build)
+cp wasm/config.h src/config.h
+
+# Build C++ version (WORKS in web environment)
 bash build_simple.sh
 
-# FIRST TIME: Install Emscripten (if /home/user/emsdk doesn't exist)
-cd /home/user
-git clone --depth 1 https://github.com/emscripten-core/emsdk.git
-cd emsdk
-./emsdk install latest
-./emsdk activate latest
+# WASM build (NOT AVAILABLE in Claude Code web - requires Emscripten)
+# If Emscripten were available:
+# cd wasm && make
 
-# EVERY SESSION: Activate Emscripten before building WASM
-source /home/user/emsdk/emsdk_env.sh
-
-# Build WASM version
-cd /home/user/necpp/wasm
-make
-
-# Clean WASM build
+# Clean builds
+rm -f nec2++ src/*.o
 cd wasm && make clean
-
-# Fix config.h if C++ build fails
-cp wasm/config.h src/config.h
 ```
 
 ## Testing
@@ -135,23 +131,23 @@ ls testharness/*.md
 ## Common Issues & Fixes
 
 ```bash
-# ERROR: Emscripten not found / em++ command not found
-source /home/user/emsdk/emsdk_env.sh
-
 # ERROR: config.h: No such file or directory
+# SOLUTION: This is the most common issue!
 cp wasm/config.h src/config.h
 
+# ERROR: Emscripten not found / em++ command not found
+# SOLUTION: Expected in web environment - cannot build WASM
+# Work with C++ version instead
+
 # ERROR: cannot find necpp.js module
-# Make sure you're in correct directory when running node
-cd /home/user/necpp
-node wasm/nec_wasm.js -i testharness/data/example1.nec -o output.out
+# SOLUTION: WASM files may not be built - build C++ version instead
+./nec2++ -i testharness/data/example1.nec -o output.out
 
 # Build artifacts in git
-# (Already handled in .gitignore: m4/, config/m4/, nec2++, *.outwasm)
+# Already handled in .gitignore: m4/, config/m4/, nec2++, *.outwasm, src/config.h
 
 # Clean everything
-cd /home/user/necpp
-make -f testharness/Makefile.wasm clean
-cd wasm && make clean
-cd .. && rm -f nec2++
+rm -f nec2++
+cd testharness && rm -f data/*.out*
+cd ../wasm && make clean
 ```
