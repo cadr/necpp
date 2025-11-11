@@ -24,17 +24,34 @@ If you use nec2++, please cite it as follows:
 Timothy C.A. Molteno, ''NEC2++: An NEC-2 compatible Numerical Electromagnetics Code'', Electronics Technical Reports No. 2014-3, ISSN 1172-496X, October
 2014.
 
-## WebAssembly Port (NEW!)
+## WebAssembly Port
 
-NEC2++ can now run directly in your web browser! Try the interactive demo:
+NEC2++ can now run directly in your web browser or Node.js! The WASM port provides:
 
+* **Browser support** - Run electromagnetic simulations client-side
+* **Node.js support** - Use in server applications
+* **Full API** - Complete C++ functionality via JavaScript bindings
+* **100% test coverage** - All 41 test cases passing
+
+### Quick Start
+
+**With Docker (easiest):**
 ```bash
 docker-compose up
 ```
-
 Then open **http://localhost:8000** in your browser.
 
-No installation needed - just Docker! See [DOCKER.md](DOCKER.md) for details, or check the [wasm/](wasm/) directory for the complete WebAssembly port with JavaScript API bindings.
+**Without Docker:**
+See [wasm/README.md](wasm/README.md) for build instructions using Emscripten.
+
+### Documentation
+
+* [wasm/README.md](wasm/README.md) - WASM build and usage guide
+* [wasm/USAGE.md](wasm/USAGE.md) - Complete API reference
+* [wasm/QUICKSTART.md](wasm/QUICKSTART.md) - Quick start guide
+* [wasm/dist/README.md](wasm/dist/README.md) - NPM package documentation
+* [DOCKER.md](DOCKER.md) - Docker deployment guide
+* [testharness/WASM_TESTING.md](testharness/WASM_TESTING.md) - Testing guide
 
 ## Documentation
 

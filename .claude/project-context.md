@@ -44,43 +44,48 @@ necpp/
 ### Current Status (as of Nov 2025)
 
 - **Autotools**: Partially broken (requires Fortran compiler)
-- **Simple Build**: Use `build_simple.sh` (C++ only, no dependencies)
-- **WASM Build**: Use `wasm/Makefile` with Emscripten
+- **Simple Build**: Use `build_simple.sh` (C++ only, no dependencies) ✅ WORKS IN WEB
+- **WASM Build**: Use `wasm/Makefile` with Emscripten ❌ NOT AVAILABLE IN WEB
 
-### Building C++ Version
+### Environment: Claude Code on Web
+
+**Available:**
+- ✅ C++ compiler (g++)
+- ✅ Node.js (`/opt/node22/bin/node`)
+- ✅ Python 3
+- ✅ Standard build tools (make, bash)
+
+**NOT Available:**
+- ❌ Docker
+- ❌ Emscripten SDK
+- ❌ Fortran compiler
+
+### Building C++ Version (RECOMMENDED for web)
 
 ```bash
-# Simple method (recommended)
+# CRITICAL FIRST STEP: Copy config.h
+cp wasm/config.h src/config.h
+
+# Build using simple method
 bash build_simple.sh
 # Produces: ./nec2++
-
-# Traditional method (if autotools work)
-./configure --with-bounds --without-lapack
-make
 ```
 
-### Building WASM Version
+**Note:** The `config.h` copy is REQUIRED before every build. The file is gitignored, so you must recreate it each session.
 
+### Building WASM Version (External environment only)
+
+WASM build requires Emscripten SDK, which is not available in Claude Code web environment.
+
+**For reference** (in environments with Emscripten):
 ```bash
-# First time: Install Emscripten SDK (if not present)
-cd /home/user
-git clone --depth 1 https://github.com/emscripten-core/emsdk.git
-cd emsdk
-./emsdk install latest
-./emsdk activate latest
-
-# Every session: Activate Emscripten
-source /home/user/emsdk/emsdk_env.sh
+# Activate Emscripten
+source /path/to/emsdk/emsdk_env.sh
 
 # Build WASM
-cd /home/user/necpp/wasm
+cd wasm
 make
 # Produces: necpp.js and necpp.wasm
-```
-
-**Important**: Must have `config.h` in `src/` directory. If missing:
-```bash
-cp wasm/config.h src/config.h
 ```
 
 ## Key Components
@@ -273,23 +278,42 @@ Large models (>1000 segments):
 
 ## Recent Work (Nov 2025)
 
-**Completed: Full WASM Implementation (100% test coverage)**
+### WASM Implementation Complete (100% test coverage) ✅
 
-Changes:
+**Core Changes:**
 - Extended `wasm/necpp_bindings.cpp` with 11 missing card functions
 - Enhanced `wasm/nec_wasm.js` with complete card support and error handling
 - Added `-mnontrapping-fptoint` compiler flag to `wasm/Makefile`
 - Implemented graceful error recovery (try-catch blocks)
 - Added default frequency handling for XQ card
 - Created `test_all_wasm.sh` comprehensive test script
+- Added comprehensive getter functions in `src/lib_getters.cpp` (345 lines)
+- Extended `src/libnecpp.h` with 197 lines of new API functions
 
-Results:
+**Results:**
 - **Before**: 2/41 WASM tests passing (5%)
 - **After**: 41/41 WASM tests passing (100%)
 - **Status**: ✅ Complete feature parity with C++ version
 
-Key Technical Solutions:
+**Technical Solutions:**
 1. **Divide-by-zero errors**: Wrapped RP, NE, NH card operations in try-catch blocks
 2. **Missing card support**: Added all missing card functions to bindings
 3. **XQ without frequency**: Added auto-default to 299.8 MHz
 4. **Error propagation**: Enhanced to continue processing after non-fatal errors
+
+### Documentation Cleanup (Current Session)
+
+**Removed redundant files:**
+- `FINAL_STATUS_REPORT.md` - Redundant status report
+- `WASM_IMPLEMENTATION_COMPLETE.md` - Duplicate implementation summary
+- `wasm/NPM_README.md` - Exact duplicate of `wasm/dist/README.md`
+
+**Updated:**
+- `README.md` - Enhanced WASM section with better documentation links
+- `.claude/` files - Updated for Claude Code web environment
+
+**Documentation Structure:**
+- Root: Essential project docs (README, INSTALL, DOCKER)
+- wasm/: WASM-specific docs (README, USAGE, QUICKSTART, SETUP)
+- testharness/: Testing documentation
+- .claude/: Claude Code project context and guides
