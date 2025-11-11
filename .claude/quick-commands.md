@@ -1,9 +1,29 @@
 # Quick Command Reference
 
-## Environment: Claude Code on Web
+## Environment: Claude Code
 
-**Available:** ✅ C++ compiler, Node.js, Python 3, make, bash
-**NOT Available:** ❌ Docker, Emscripten SDK, Fortran
+**Available:** ✅ C++ compiler, Node.js, Python 3, make, bash, Emscripten SDK (after installation)
+**NOT Available:** ❌ Docker (in some environments), Fortran
+
+## Emscripten Setup
+
+```bash
+# ONE-TIME: Install Emscripten SDK
+cd /home/user
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+./emsdk install latest
+./emsdk activate latest
+
+# EVERY SESSION: Activate Emscripten environment (required before building WASM)
+source /home/user/emsdk/emsdk_env.sh
+
+# Verify installation
+em++ --version
+emcc --version
+```
+
+**See also:** `/setup-emscripten` command or `.claude/commands/setup-emscripten.md` for detailed instructions
 
 ## Building
 
@@ -11,12 +31,12 @@
 # ALWAYS DO THIS FIRST (before any C++ build)
 cp wasm/config.h src/config.h
 
-# Build C++ version (WORKS in web environment)
+# Build C++ version
 bash build_simple.sh
 
-# WASM build (NOT AVAILABLE in Claude Code web - requires Emscripten)
-# If Emscripten were available:
-# cd wasm && make
+# Build WASM version (requires Emscripten - see setup above)
+source /home/user/emsdk/emsdk_env.sh  # Activate Emscripten first
+cd wasm && make
 
 # Clean builds
 rm -f nec2++ src/*.o

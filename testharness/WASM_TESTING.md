@@ -12,8 +12,43 @@ The WASM test harness compares numerical outputs from the NEC++ WebAssembly port
 
 - Node.js (v14 or later)
 - Python 3 (for comparison tool)
-- Emscripten SDK (for building WASM)
+- Emscripten SDK (for building WASM) - **Installation instructions below**
 - C++ compiler (g++)
+
+### Installing Emscripten SDK
+
+**IMPORTANT:** Before building WASM, you must install the Emscripten SDK. This is a one-time setup:
+
+```bash
+# Navigate to your home directory
+cd /home/user
+
+# Clone the Emscripten SDK repository
+git clone https://github.com/emscripten-core/emsdk.git
+
+# Enter the emsdk directory
+cd emsdk
+
+# Download and install the latest SDK tools (takes several minutes)
+./emsdk install latest
+
+# Activate the latest SDK version
+./emsdk activate latest
+
+# Activate PATH and environment variables
+source /home/user/emsdk/emsdk_env.sh
+```
+
+**Verify installation:**
+```bash
+em++ --version
+emcc --version
+```
+
+**Remember:** You need to activate Emscripten in every new terminal session:
+```bash
+source /home/user/emsdk/emsdk_env.sh
+```
 
 ### Building
 
@@ -24,6 +59,7 @@ bash build_simple.sh
 
 # 2. Build the WASM version
 cd wasm
+# Activate Emscripten (if not already active in this terminal)
 source /home/user/emsdk/emsdk_env.sh
 make
 
@@ -172,16 +208,14 @@ docker run --rm necpp-wasm tar -czf - testharness/data/*.out* 2>/dev/null | tar 
 
 ### Emscripten Not Found
 
-```bash
-# Activate Emscripten
-source /home/user/emsdk/emsdk_env.sh
+**Problem:** `em++: command not found` or `emcc: command not found`
 
-# Or install
-git clone https://github.com/emscripten-core/emsdk.git
-cd emsdk
-./emsdk install latest
-./emsdk activate latest
+**Solution:** Activate the Emscripten environment in your current terminal:
+```bash
+source /home/user/emsdk/emsdk_env.sh
 ```
+
+If Emscripten is not installed, follow the installation instructions at the top of this document or see the [WASM QUICKSTART guide](../wasm/QUICKSTART.md#prerequisites).
 
 ### WASM Runtime Errors
 

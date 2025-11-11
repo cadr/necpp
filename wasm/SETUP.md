@@ -4,11 +4,51 @@ This guide explains how to build and use the NEC++ WASM package as a local npm d
 
 ## Quick Start
 
-### 1. Build the WASM Files
+### 1. Install Emscripten SDK (First Time Only)
 
-You need to compile the C++ code to WebAssembly first. Choose one of the following methods:
+Before building the WASM files, you need the Emscripten SDK installed:
 
-#### Option A: Using Docker (Recommended - No Emscripten install needed)
+```bash
+# Navigate to your home directory
+cd /home/user
+
+# Clone the Emscripten SDK repository
+git clone https://github.com/emscripten-core/emsdk.git
+
+# Enter the emsdk directory
+cd emsdk
+
+# Download and install the latest SDK tools (takes several minutes)
+./emsdk install latest
+
+# Activate the latest SDK version
+./emsdk activate latest
+
+# Activate PATH and environment variables
+source /home/user/emsdk/emsdk_env.sh
+```
+
+**Verify installation:**
+```bash
+em++ --version
+emcc --version
+```
+
+**IMPORTANT:** Every new terminal session requires activating Emscripten:
+```bash
+source /home/user/emsdk/emsdk_env.sh
+```
+
+Consider adding to `~/.bashrc` for automatic activation:
+```bash
+echo 'source /home/user/emsdk/emsdk_env.sh' >> ~/.bashrc
+```
+
+### 2. Build the WASM Files
+
+You need to compile the C++ code to WebAssembly. Choose one of the following methods:
+
+#### Option A: Using Docker (No Emscripten activation needed)
 
 ```bash
 cd wasm
@@ -20,25 +60,20 @@ This will:
 - Compile the C++ code to WASM
 - Generate `necpp.js` and `necpp.wasm` in the `wasm/` directory
 
-#### Option B: Using Make with Emscripten SDK
+#### Option B: Using Make with Emscripten SDK (Recommended)
 
-If you have Emscripten installed:
+If you have Emscripten installed (see step 1 above):
 
 ```bash
-cd wasm
+# Activate Emscripten environment
+source /home/user/emsdk/emsdk_env.sh
+
+# Navigate to wasm directory and build
+cd /home/user/necpp/wasm
 make
 ```
 
-**Installing Emscripten** (if needed):
-```bash
-git clone https://github.com/emscripten-core/emsdk.git
-cd emsdk
-./emsdk install latest
-./emsdk activate latest
-source ./emsdk_env.sh
-```
-
-### 2. Prepare the Distribution
+### 3. Prepare the Distribution
 
 After building, prepare the dist directory:
 
@@ -66,7 +101,7 @@ Contents of dist/:
 -rw-r--r-- 1 user user  1.1K package.json
 ```
 
-### 3. Use in Another Project
+### 4. Use in Another Project
 
 Now you can install this package from another project on your computer:
 

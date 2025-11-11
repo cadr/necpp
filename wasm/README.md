@@ -26,21 +26,52 @@ For more Docker options, see the [Docker Guide](../DOCKER.md) in the repository 
 
 ## Building the WebAssembly Module
 
-### Prerequisites
+### Prerequisites: Install Emscripten SDK
 
-You need to have the Emscripten SDK installed. If you don't have it:
+**IMPORTANT:** You must have the Emscripten SDK installed to build the WebAssembly version. Follow these steps:
+
+#### Step 1: Install Emscripten
 
 ```bash
-# Clone the Emscripten SDK
+# Navigate to your home directory
+cd /home/user
+
+# Clone the Emscripten SDK repository
 git clone https://github.com/emscripten-core/emsdk.git
+
+# Enter the emsdk directory
 cd emsdk
 
-# Install and activate the latest SDK
+# Download and install the latest SDK tools (this may take several minutes)
 ./emsdk install latest
+
+# Activate the latest SDK version
 ./emsdk activate latest
 
 # Activate PATH and other environment variables
-source ./emsdk_env.sh
+source /home/user/emsdk/emsdk_env.sh
+```
+
+#### Step 2: Verify Installation
+
+```bash
+em++ --version
+emcc --version
+```
+
+You should see version information for the Emscripten compiler.
+
+#### Step 3: Environment Activation (Important!)
+
+**Every time you open a new terminal**, you need to activate the Emscripten environment before building:
+
+```bash
+source /home/user/emsdk/emsdk_env.sh
+```
+
+**Pro tip:** Add this to your `~/.bashrc` for automatic activation:
+```bash
+echo 'source /home/user/emsdk/emsdk_env.sh' >> ~/.bashrc
 ```
 
 ### Build Instructions
@@ -48,7 +79,11 @@ source ./emsdk_env.sh
 #### Using Make (Recommended)
 
 ```bash
-cd wasm
+# Ensure Emscripten is active
+source /home/user/emsdk/emsdk_env.sh
+
+# Navigate to wasm directory and build
+cd /home/user/necpp/wasm
 make
 ```
 
