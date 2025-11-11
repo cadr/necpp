@@ -71,6 +71,9 @@ necpp.pc
 ###################
 /nec2++
 *.outwasm
+wasm/test_radiation_pattern
+wasm/test_user_params
+wasm/test_necpp_simple
 
 html/*
 xml/*
