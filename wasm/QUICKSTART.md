@@ -22,40 +22,64 @@ If you prefer to build manually without Docker, follow these steps:
 
 ### Prerequisites
 
-1. **Install Emscripten SDK**
+#### 1. Install Emscripten SDK
+
+**IMPORTANT:** The Emscripten SDK is required to build the WebAssembly version of NEC++. Follow these steps carefully:
 
 ```bash
-# Clone the repository
+# Navigate to your home directory (or preferred install location)
+cd /home/user
+
+# Clone the Emscripten SDK repository
 git clone https://github.com/emscripten-core/emsdk.git
+
+# Enter the emsdk directory
 cd emsdk
 
 # Download and install the latest SDK tools
+# This may take several minutes as it downloads the compiler toolchain
 ./emsdk install latest
 
 # Make the "latest" SDK "active" for the current user
 ./emsdk activate latest
 
 # Activate PATH and other environment variables in the current terminal
-source ./emsdk_env.sh
+source /home/user/emsdk/emsdk_env.sh
 ```
 
-2. **Verify Installation**
+**Note:** You'll need to run `source /home/user/emsdk/emsdk_env.sh` in every new terminal session before building WASM. Consider adding this to your `~/.bashrc` or `~/.profile` for automatic activation:
+
+```bash
+# Add to ~/.bashrc for automatic Emscripten activation
+echo 'source /home/user/emsdk/emsdk_env.sh' >> ~/.bashrc
+```
+
+#### 2. Verify Installation
 
 ```bash
 em++ --version
+emcc --version
 ```
 
-You should see output showing the Emscripten version.
+You should see output showing the Emscripten version (e.g., "emcc (Emscripten gcc/clang-like replacement) 3.1.50").
 
 ## Build Steps
 
-1. **Navigate to the wasm directory**
+1. **Activate Emscripten Environment**
+
+Before building, ensure the Emscripten environment is active in your current terminal:
 
 ```bash
-cd necpp/wasm
+source /home/user/emsdk/emsdk_env.sh
 ```
 
-2. **Build using the provided script** (Recommended)
+2. **Navigate to the wasm directory**
+
+```bash
+cd /home/user/necpp/wasm
+```
+
+3. **Build using the provided script** (Recommended)
 
 ```bash
 ./build.sh
@@ -67,7 +91,7 @@ Or build manually:
 make
 ```
 
-3. **Verify the build**
+4. **Verify the build**
 
 You should see two files created:
 - `necpp.js` - JavaScript glue code (~500KB)
@@ -169,12 +193,14 @@ Save this file in the `wasm` directory and open it in your browser (using the lo
 
 ### Build Fails
 
-**Problem:** `em++: command not found`
+**Problem:** `em++: command not found` or `emcc: command not found`
 
-**Solution:** Make sure you've activated the Emscripten environment:
+**Solution:** Make sure you've activated the Emscripten environment in your current terminal:
 ```bash
-source /path/to/emsdk/emsdk_env.sh
+source /home/user/emsdk/emsdk_env.sh
 ```
+
+You need to run this command in every new terminal session before building WASM.
 
 **Problem:** Compilation errors about missing headers
 

@@ -11,23 +11,46 @@ This directory contains context files for Claude Code to help understand and wor
 
 ## Quick Start for Claude Code
 
-1. **Building C++:**
+1. **Setup Emscripten (one-time):**
+   ```bash
+   # See .claude/commands/setup-emscripten.md for full instructions
+   cd /home/user
+   git clone https://github.com/emscripten-core/emsdk.git
+   cd emsdk
+   ./emsdk install latest
+   ./emsdk activate latest
+   source /home/user/emsdk/emsdk_env.sh
+   ```
+
+2. **Building C++:**
    ```bash
    cp wasm/config.h src/config.h
    bash build_simple.sh
    ```
 
-2. **Testing:**
+3. **Building WASM:**
    ```bash
-   # Tests work without WASM (Node.js available, no Emscripten in web environment)
-   # C++ version can be built and tested
+   source /home/user/emsdk/emsdk_env.sh  # Activate Emscripten
+   cd wasm
+   make
    ```
 
-3. **Important Notes:**
-   - Running in Claude Code web environment (no Docker available)
-   - Emscripten SDK not installed (WASM builds not available)
-   - Node.js IS available for testing
+4. **Testing:**
+   ```bash
+   # Run all WASM tests
+   bash test_all_wasm.sh
+
+   # Or run detailed tests from testharness
+   cd testharness
+   make -f Makefile.wasm test_wasm
+   ```
+
+5. **Important Notes:**
+   - Emscripten SDK can be installed for WASM builds
+   - Emscripten must be activated in each new terminal session
+   - Node.js is available for running tests
    - config.h must be copied from wasm/ to src/ before C++ builds
+   - See `.claude/commands/setup-emscripten.md` for detailed Emscripten setup
 
 ## Documentation Structure
 
