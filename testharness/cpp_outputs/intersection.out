@@ -1,0 +1,29 @@
+
+
+
+                                __________________________________________
+                               |                                          |
+                               | NUMERICAL ELECTROMAGNETICS CODE (nec2++) |
+                               | Implemented in 'C++' in Double Precision |
+                               |        Version 1.7.5 [Nov 13 2025]        |
+                               |__________________________________________|
+
+
+
+                               ---------------- COMMENTS ----------------
+                                Test intersection
+                                SHOULD FAIL with nec_exception about intersecting wires
+                               
+
+
+
+                                -------- STRUCTURE SPECIFICATION --------
+                                COORDINATES MUST BE INPUT IN
+                                METERS OR BE SCALED TO METERS
+                                BEFORE STRUCTURE INPUT IS ENDED
+  WIRE                                                                                 SEG FIRST  LAST  TAG
+   No:        X1         Y1         Z1         X2         Y2         Z2       RADIUS   No:   SEG   SEG  No:
+
+     1      0.0000     0.0000     0.0000     1.0000     1.0000     0.0000     0.0050     7     1     7    0
+     2      0.3000     0.0000     0.0000     0.3000     1.0000     0.0000     0.0050     7     8    14    1                               NEC++ Runtime Error: 
+                               GEOMETRY DATA ERROR -- WIRE #1 (TAG ID #0) INTERSECTS WIRE #2 (TAG ID #1)

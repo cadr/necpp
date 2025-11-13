@@ -1,0 +1,29 @@
+
+
+
+                                __________________________________________
+                               |                                          |
+                               | NUMERICAL ELECTROMAGNETICS CODE (nec2++) |
+                               | Implemented in 'C++' in Double Precision |
+                               |        Version 1.7.5 [Nov 13 2025]        |
+                               |__________________________________________|
+
+
+
+                               ---------------- COMMENTS ----------------
+                                GA - NEC FILE
+                                go blue ! 
+
+
+
+                                -------- STRUCTURE SPECIFICATION --------
+                                COORDINATES MUST BE INPUT IN
+                                METERS OR BE SCALED TO METERS
+                                BEFORE STRUCTURE INPUT IS ENDED
+  WIRE                                                                                 SEG FIRST  LAST  TAG
+   No:        X1         Y1         Z1         X2         Y2         Z2       RADIUS   No:   SEG   SEG  No:
+
+     1      0.0000     0.0000     0.0000     0.0170     0.0420    -0.0470     0.0010    52     1    52    0
+     2      0.0130    -0.0150     0.0390    -0.0080     0.0120     0.0440     0.0010    27    53    79    0
+     3     -0.0080     0.0120     0.0440    -0.0230     0.0470    -0.0020     0.0010    47    80   126    0                               NEC++ Runtime Error: 
+                               GEOMETRY DATA ERROR -- FIRST SEGMENT MIDPOINT OF WIRE #3 (TAG ID #0) INTERSECTS WIRE #2 (TAG ID #0)

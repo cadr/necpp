@@ -1,0 +1,1066 @@
+
+
+
+                                __________________________________________
+                               |                                          |
+                               | NUMERICAL ELECTROMAGNETICS CODE (nec2++) |
+                               | Implemented in 'C++' in Double Precision |
+                               |        Version 1.7.5 [Nov 13 2025]        |
+                               |__________________________________________|
+
+
+
+                               ---------------- COMMENTS ----------------
+                                --- NEC2 Input File created by xnec2c 0.9-beta ---
+                                --- End Comments ---
+
+
+
+                                -------- STRUCTURE SPECIFICATION --------
+                                COORDINATES MUST BE INPUT IN
+                                METERS OR BE SCALED TO METERS
+                                BEFORE STRUCTURE INPUT IS ENDED
+  WIRE                                                                                 SEG FIRST  LAST  TAG
+   No:        X1         Y1         Z1         X2         Y2         Z2       RADIUS   No:   SEG   SEG  No:
+
+     1      0.0000     0.0000     0.0000     0.0000     0.0000     1.0000     0.0030     8     1     8    1
+     1R    0.50000     0.50000     0.00000     0.50000    -0.50000     0.00000     SURFACE - 3 BY 3 PATCHES
+         -0.50000    -0.50000     0.00000    -0.50000     0.50000     0.00000
+
+     TOTAL SEGMENTS USED: 8   SEGMENTS IN A SYMMETRIC CELL: 8   SYMMETRY FLAG: 0
+       TOTAL PATCHES USED: 12   PATCHES IN A SYMMETRIC CELL: 12
+
+
+                               ---------- SEGMENTATION DATA ----------
+                                        COORDINATES IN METERS
+                            I+ AND I- INDICATE THE SEGMENTS BEFORE AND AFTER I
+
+   SEG    COORDINATES OF SEGM CENTER     SEGM    ORIENTATION ANGLES    WIRE    CONNECTION DATA   TAG
+   No:       X         Y         Z      LENGTH     ALPHA      BETA    RADIUS    I-     I    I+   NO:
+     1    0.0000    0.0000    0.0625    0.1250   90.0000    0.0000    0.0030 100005     1     2     1
+     2    0.0000    0.0000    0.1875    0.1250   90.0000    0.0000    0.0030     1     2     3     1
+     3    0.0000    0.0000    0.3125    0.1250   90.0000    0.0000    0.0030     2     3     4     1
+     4    0.0000    0.0000    0.4375    0.1250   90.0000    0.0000    0.0030     3     4     5     1
+     5    0.0000    0.0000    0.5625    0.1250   90.0000    0.0000    0.0030     4     5     6     1
+     6    0.0000    0.0000    0.6875    0.1250   90.0000    0.0000    0.0030     5     6     7     1
+     7    0.0000    0.0000    0.8125    0.1250   90.0000    0.0000    0.0030     6     7     8     1
+     8    0.0000    0.0000    0.9375    0.1250   90.0000    0.0000    0.0030     7     8     0     1
+
+
+                                    --------- SURFACE PATCH DATA ---------
+                                             COORDINATES IN METERS
+
+ PATCH      COORD. OF PATCH CENTER           UNIT NORMAL VECTOR       PATCH           COMPONENTS OF UNIT TANGENT VECTORS
+  NO:       X          Y          Z          X        Y        Z       AREA         X1       Y1       Z1        X2       Y2      Z2
+    1    0.33333    0.33333    0.00000   -0.0000  -0.0000  -1.0000    0.11111    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+    2    0.33333    0.00000    0.00000   -0.0000  -0.0000  -1.0000    0.11111    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+    3    0.33333   -0.33333    0.00000   -0.0000  -0.0000  -1.0000    0.11111    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+    4    0.00000    0.33333    0.00000   -0.0000  -0.0000  -1.0000    0.11111    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+    5   -0.08333   -0.08333    0.00000   -0.0000  -0.0000  -1.0000    0.02778    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+    6   -0.08333    0.08333    0.00000   -0.0000  -0.0000  -1.0000    0.02778    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+    7    0.08333    0.08333    0.00000   -0.0000  -0.0000  -1.0000    0.02778    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+    8    0.08333   -0.08333    0.00000   -0.0000  -0.0000  -1.0000    0.02778    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+    9    0.00000   -0.33333    0.00000   -0.0000  -0.0000  -1.0000    0.11111    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+   10   -0.33333    0.33333    0.00000   -0.0000  -0.0000  -1.0000    0.11111    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+   11   -0.33333    0.00000    0.00000   -0.0000  -0.0000  -1.0000    0.11111    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+   12   -0.33333   -0.33333    0.00000   -0.0000  -0.0000  -1.0000    0.11111    0.0000  -1.0000   0.0000   -1.0000   0.0000   0.0000
+
+
+
+*****  DATA CARD N0.   1 EX   0     1     1     0  1.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00
+*****  DATA CARD N0.   2 EK   0     0     0     0  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00
+*****  DATA CARD N0.   3 FR   0    11     0     0  5.00000E+01  5.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00
+*****  DATA CARD N0.   4 XQ   0     0     0     0  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00
+
+
+                               --------- FREQUENCY --------
+                               FREQUENCY=  5.0000E+01 MHZ
+                               WAVELENGTH= 5.9959E+00 METERS
+
+
+                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS
+                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART
+                        THE EXTENDED THIN WIRE KERNEL WILL BE USED
+
+
+
+                          ------ STRUCTURE IMPEDANCE LOADING ------
+                                 THIS STRUCTURE IS NOT LOADED
+
+
+
+                            -------- ANTENNA ENVIRONMENT --------
+                            FREE SPACE
+
+
+
+                             ---------- MATRIX TIMING ----------
+                               FILL= 0 msec  FACTOR: 0 msec
+
+
+                      ----- ANTENNA INPUT PARAMETERS -----
+  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER
+  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)
+   1     1  1.0000E+00  0.0000E+00  3.5389E-06  1.0556E-03  3.1758E+00 -9.4730E+02  3.5389E-06  1.0556E-03  1.7695E-06
+
+
+
+
+
+
+
+                        ----- CURRENTS AND LOCATION -----
+                            DISTANCES IN WAVELENGTHS 
+
+   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------
+   No:  No:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE
+     1    1    0.0000    0.0000    0.0104   0.02085  3.5389E-06  1.0556E-03  1.0556E-03   89.808 
+     2    1    0.0000    0.0000    0.0313   0.02085  4.4783E-06  8.3737E-04  8.3738E-04   89.694 
+     3    1    0.0000    0.0000    0.0521   0.02085  5.4253E-06  6.8615E-04  6.8617E-04   89.547 
+     4    1    0.0000    0.0000    0.0730   0.02085  5.9598E-06  5.6687E-04  5.6690E-04   89.398 
+     5    1    0.0000    0.0000    0.0938   0.02085  5.9316E-06  4.5235E-04  4.5239E-04   89.249 
+     6    1    0.0000    0.0000    0.1147   0.02085  5.2650E-06  3.3598E-04  3.3602E-04   89.102 
+     7    1    0.0000    0.0000    0.1355   0.02085  3.9045E-06  2.1475E-04  2.1478E-04   88.958 
+     8    1    0.0000    0.0000    0.1564   0.02085  1.6873E-06  8.1868E-05  8.1885E-05   88.819 
+
+
+
+
+
+
+                       ----- SURFACE PATCH CURRENTS -----
+                            DISTANCES IN WAVELENGTHS 
+                              CURRENT IN AMPS/METER 
+
+
+                     --------- SURFACE COMPONENTS ---------
+                   --------- RECTANGULAR COMPONENTS ---------
+  PCH   --- PATCH CENTER ---     TANGENT VECTOR 1     TANGENT VECTOR 2    ------- X ------    ------- Y ------    ------- Z ------
+  No:    X       Y       Z       MAG.       PHASE     MAG.       PHASE    REAL   IMAGINARY    REAL   IMAGINARY    REAL   IMAGINARY
+    1   0.056   0.056   0.000  1.8478E-04   -93.56  1.8478E-04   -93.56  1.15E-05  1.84E-04  1.15E-05  1.84E-04 -0.00E+00 -0.00E+00 
+    2   0.056   0.000   0.000  1.3294E-19   -91.82  3.9915E-04   -91.82  1.27E-05  3.99E-04  4.22E-21  1.33E-19 -0.00E+00 -0.00E+00 
+    3   0.056  -0.056   0.000  1.8478E-04    86.44  1.8478E-04   -93.56  1.15E-05  1.84E-04 -1.15E-05 -1.84E-04  0.00E+00  0.00E+00 
+    4   0.000   0.056   0.000  3.9915E-04   -91.82  1.3294E-19   -91.82  4.22E-21  1.33E-19  1.27E-05  3.99E-04 -0.00E+00 -0.00E+00 
+    5  -0.014  -0.014   0.000  9.4585E-04    89.61  9.4585E-04    89.61 -6.37E-06 -9.46E-04 -6.37E-06 -9.46E-04  0.00E+00  0.00E+00 
+    6  -0.014   0.014   0.000  9.4585E-04   -90.39  9.4585E-04    89.61 -6.37E-06 -9.46E-04  6.37E-06  9.46E-04  0.00E+00  0.00E+00 
+    7   0.014   0.014   0.000  9.4585E-04   -90.39  9.4585E-04   -90.39  6.37E-06  9.46E-04  6.37E-06  9.46E-04 -0.00E+00 -0.00E+00 
+    8   0.014  -0.014   0.000  9.4585E-04    89.61  9.4585E-04   -90.39  6.37E-06  9.46E-04 -6.37E-06 -9.46E-04  0.00E+00  0.00E+00 
+    9   0.000  -0.056   0.000  3.9915E-04    88.18  1.3294E-19   -91.82  4.22E-21  1.33E-19 -1.27E-05 -3.99E-04  0.00E+00  0.00E+00 
+   10  -0.056   0.056   0.000  1.8478E-04   -93.56  1.8478E-04    86.44 -1.15E-05 -1.84E-04  1.15E-05  1.84E-04  0.00E+00  0.00E+00 
+   11  -0.056   0.000   0.000  1.3294E-19   -91.82  3.9915E-04    88.18 -1.27E-05 -3.99E-04  4.22E-21  1.33E-19  0.00E+00  0.00E+00 
+   12  -0.056  -0.056   0.000  1.8478E-04    86.44  1.8478E-04    86.44 -1.15E-05 -1.84E-04 -1.15E-05 -1.84E-04  0.00E+00  0.00E+00 
+
+
+
+
+
+
+                               ---------- POWER BUDGET ---------
+                               INPUT POWER   =  1.7695E-06 Watts
+                               RADIATED POWER=  1.7695E-06 Watts
+                               STRUCTURE LOSS=  0.0000E+00 Watts
+                               NETWORK LOSS  =  0.0000E+00 Watts
+                               EFFICIENCY    =  100.00 Percent
+
+
+                               --------- FREQUENCY --------
+                               FREQUENCY=  5.5000E+01 MHZ
+                               WAVELENGTH= 5.4508E+00 METERS
+
+
+                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS
+                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART
+                        THE EXTENDED THIN WIRE KERNEL WILL BE USED
+
+
+
+                          ------ STRUCTURE IMPEDANCE LOADING ------
+                                 THIS STRUCTURE IS NOT LOADED
+
+
+
+                            -------- ANTENNA ENVIRONMENT --------
+                            FREE SPACE
+
+
+
+                             ---------- MATRIX TIMING ----------
+                               FILL= 0 msec  FACTOR: 0 msec
+
+
+                      ----- ANTENNA INPUT PARAMETERS -----
+  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER
+  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)
+   1     1  1.0000E+00  0.0000E+00  5.5660E-06  1.1842E-03  3.9693E+00 -8.4446E+02  5.5660E-06  1.1842E-03  2.7830E-06
+
+
+
+
+
+
+
+                        ----- CURRENTS AND LOCATION -----
+                            DISTANCES IN WAVELENGTHS 
+
+   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------
+   No:  No:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE
+     1    1    0.0000    0.0000    0.0115   0.02293  5.5660E-06  1.1842E-03  1.1842E-03   89.731 
+     2    1    0.0000    0.0000    0.0344   0.02293  7.0357E-06  9.4769E-04  9.4771E-04   89.575 
+     3    1    0.0000    0.0000    0.0573   0.02293  8.5120E-06  7.8383E-04  7.8387E-04   89.378 
+     4    1    0.0000    0.0000    0.0803   0.02293  9.3365E-06  6.5253E-04  6.5260E-04   89.180 
+     5    1    0.0000    0.0000    0.1032   0.02293  9.2759E-06  5.2388E-04  5.2396E-04   88.986 
+     6    1    0.0000    0.0000    0.1261   0.02293  8.2155E-06  3.9090E-04  3.9099E-04   88.796 
+     7    1    0.0000    0.0000    0.1491   0.02293  6.0762E-06  2.5066E-04  2.5073E-04   88.611 
+     8    1    0.0000    0.0000    0.1720   0.02293  2.6174E-06  9.5735E-05  9.5770E-05   88.434 
+
+
+
+
+
+
+                       ----- SURFACE PATCH CURRENTS -----
+                            DISTANCES IN WAVELENGTHS 
+                              CURRENT IN AMPS/METER 
+
+
+                     --------- SURFACE COMPONENTS ---------
+                   --------- RECTANGULAR COMPONENTS ---------
+  PCH   --- PATCH CENTER ---     TANGENT VECTOR 1     TANGENT VECTOR 2    ------- X ------    ------- Y ------    ------- Z ------
+  No:    X       Y       Z       MAG.       PHASE     MAG.       PHASE    REAL   IMAGINARY    REAL   IMAGINARY    REAL   IMAGINARY
+    1   0.061   0.061   0.000  2.1481E-04   -94.64  2.1481E-04   -94.64  1.74E-05  2.14E-04  1.74E-05  2.14E-04 -0.00E+00 -0.00E+00 
+    2   0.061   0.000   0.000  1.5276E-19   -92.41  4.5866E-04   -92.41  1.93E-05  4.58E-04  6.43E-21  1.53E-19 -0.00E+00 -0.00E+00 
+    3   0.061  -0.061   0.000  2.1481E-04    85.36  2.1481E-04   -94.64  1.74E-05  2.14E-04 -1.74E-05 -2.14E-04  0.00E+00  0.00E+00 
+    4   0.000   0.061   0.000  4.5866E-04   -92.41  1.5276E-19   -92.41  6.43E-21  1.53E-19  1.93E-05  4.58E-04 -0.00E+00 -0.00E+00 
+    5  -0.015  -0.015   0.000  1.0670E-03    89.47  1.0670E-03    89.47 -9.88E-06 -1.07E-03 -9.88E-06 -1.07E-03  0.00E+00  0.00E+00 
+    6  -0.015   0.015   0.000  1.0670E-03   -90.53  1.0670E-03    89.47 -9.88E-06 -1.07E-03  9.88E-06  1.07E-03  0.00E+00  0.00E+00 
+    7   0.015   0.015   0.000  1.0670E-03   -90.53  1.0670E-03   -90.53  9.88E-06  1.07E-03  9.88E-06  1.07E-03 -0.00E+00 -0.00E+00 
+    8   0.015  -0.015   0.000  1.0670E-03    89.47  1.0670E-03   -90.53  9.88E-06  1.07E-03 -9.88E-06 -1.07E-03  0.00E+00  0.00E+00 
+    9   0.000  -0.061   0.000  4.5866E-04    87.59  1.5276E-19   -92.41  6.43E-21  1.53E-19 -1.93E-05 -4.58E-04  0.00E+00  0.00E+00 
+   10  -0.061   0.061   0.000  2.1481E-04   -94.64  2.1481E-04    85.36 -1.74E-05 -2.14E-04  1.74E-05  2.14E-04  0.00E+00  0.00E+00 
+   11  -0.061   0.000   0.000  1.5276E-19   -92.41  4.5866E-04    87.59 -1.93E-05 -4.58E-04  6.43E-21  1.53E-19  0.00E+00  0.00E+00 
+   12  -0.061  -0.061   0.000  2.1481E-04    85.36  2.1481E-04    85.36 -1.74E-05 -2.14E-04 -1.74E-05 -2.14E-04  0.00E+00  0.00E+00 
+
+
+
+
+
+
+                               ---------- POWER BUDGET ---------
+                               INPUT POWER   =  2.7830E-06 Watts
+                               RADIATED POWER=  2.7830E-06 Watts
+                               STRUCTURE LOSS=  0.0000E+00 Watts
+                               NETWORK LOSS  =  0.0000E+00 Watts
+                               EFFICIENCY    =  100.00 Percent
+
+
+                               --------- FREQUENCY --------
+                               FREQUENCY=  6.0000E+01 MHZ
+                               WAVELENGTH= 4.9966E+00 METERS
+
+
+                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS
+                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART
+                        THE EXTENDED THIN WIRE KERNEL WILL BE USED
+
+
+
+                          ------ STRUCTURE IMPEDANCE LOADING ------
+                                 THIS STRUCTURE IS NOT LOADED
+
+
+
+                            -------- ANTENNA ENVIRONMENT --------
+                            FREE SPACE
+
+
+
+                             ---------- MATRIX TIMING ----------
+                               FILL= 0 msec  FACTOR: 0 msec
+
+
+                      ----- ANTENNA INPUT PARAMETERS -----
+  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER
+  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)
+   1     1  1.0000E+00  0.0000E+00  8.5540E-06  1.3212E-03  4.8999E+00 -7.5683E+02  8.5540E-06  1.3212E-03  4.2770E-06
+
+
+
+
+
+
+
+                        ----- CURRENTS AND LOCATION -----
+                            DISTANCES IN WAVELENGTHS 
+
+   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------
+   No:  No:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE
+     1    1    0.0000    0.0000    0.0125   0.02502  8.5540E-06  1.3212E-03  1.3213E-03   89.629 
+     2    1    0.0000    0.0000    0.0375   0.02502  1.0800E-05  1.0680E-03  1.0681E-03   89.421 
+     3    1    0.0000    0.0000    0.0625   0.02502  1.3047E-05  8.9257E-04  8.9267E-04   89.163 
+     4    1    0.0000    0.0000    0.0876   0.02502  1.4287E-05  7.4934E-04  7.4947E-04   88.908 
+     5    1    0.0000    0.0000    0.1126   0.02502  1.4167E-05  6.0560E-04  6.0577E-04   88.660 
+     6    1    0.0000    0.0000    0.1376   0.02502  1.2517E-05  4.5414E-04  4.5431E-04   88.421 
+     7    1    0.0000    0.0000    0.1626   0.02502  9.2308E-06  2.9221E-04  2.9236E-04   88.191 
+     8    1    0.0000    0.0000    0.1876   0.02502  3.9623E-06  1.1182E-04  1.1189E-04   87.971 
+
+
+
+
+
+
+                       ----- SURFACE PATCH CURRENTS -----
+                            DISTANCES IN WAVELENGTHS 
+                              CURRENT IN AMPS/METER 
+
+
+                     --------- SURFACE COMPONENTS ---------
+                   --------- RECTANGULAR COMPONENTS ---------
+  PCH   --- PATCH CENTER ---     TANGENT VECTOR 1     TANGENT VECTOR 2    ------- X ------    ------- Y ------    ------- Z ------
+  No:    X       Y       Z       MAG.       PHASE     MAG.       PHASE    REAL   IMAGINARY    REAL   IMAGINARY    REAL   IMAGINARY
+    1   0.067   0.067   0.000  2.4898E-04   -95.90  2.4898E-04   -95.90  2.56E-05  2.48E-04  2.56E-05  2.48E-04 -0.00E+00 -0.00E+00 
+    2   0.067   0.000   0.000  1.7496E-19   -93.12  5.2531E-04   -93.12  2.86E-05  5.25E-04  9.54E-21  1.75E-19 -0.00E+00 -0.00E+00 
+    3   0.067  -0.067   0.000  2.4898E-04    84.10  2.4898E-04   -95.90  2.56E-05  2.48E-04 -2.56E-05 -2.48E-04  0.00E+00  0.00E+00 
+    4   0.000   0.067   0.000  5.2531E-04   -93.12  1.7496E-19   -93.12  9.54E-21  1.75E-19  2.86E-05  5.25E-04 -0.00E+00 -0.00E+00 
+    5  -0.017  -0.017   0.000  1.1979E-03    89.29  1.1979E-03    89.29 -1.49E-05 -1.20E-03 -1.49E-05 -1.20E-03  0.00E+00  0.00E+00 
+    6  -0.017   0.017   0.000  1.1979E-03   -90.71  1.1979E-03    89.29 -1.49E-05 -1.20E-03  1.49E-05  1.20E-03  0.00E+00  0.00E+00 
+    7   0.017   0.017   0.000  1.1979E-03   -90.71  1.1979E-03   -90.71  1.49E-05  1.20E-03  1.49E-05  1.20E-03 -0.00E+00 -0.00E+00 
+    8   0.017  -0.017   0.000  1.1979E-03    89.29  1.1979E-03   -90.71  1.49E-05  1.20E-03 -1.49E-05 -1.20E-03  0.00E+00  0.00E+00 
+    9   0.000  -0.067   0.000  5.2531E-04    86.88  1.7496E-19   -93.12  9.54E-21  1.75E-19 -2.86E-05 -5.25E-04  0.00E+00  0.00E+00 
+   10  -0.067   0.067   0.000  2.4898E-04   -95.90  2.4898E-04    84.10 -2.56E-05 -2.48E-04  2.56E-05  2.48E-04  0.00E+00  0.00E+00 
+   11  -0.067   0.000   0.000  1.7496E-19   -93.12  5.2531E-04    86.88 -2.86E-05 -5.25E-04  9.54E-21  1.75E-19  0.00E+00  0.00E+00 
+   12  -0.067  -0.067   0.000  2.4898E-04    84.10  2.4898E-04    84.10 -2.56E-05 -2.48E-04 -2.56E-05 -2.48E-04  0.00E+00  0.00E+00 
+
+
+
+
+
+
+                               ---------- POWER BUDGET ---------
+                               INPUT POWER   =  4.2770E-06 Watts
+                               RADIATED POWER=  4.2770E-06 Watts
+                               STRUCTURE LOSS=  0.0000E+00 Watts
+                               NETWORK LOSS  =  0.0000E+00 Watts
+                               EFFICIENCY    =  100.00 Percent
+
+
+                               --------- FREQUENCY --------
+                               FREQUENCY=  6.5000E+01 MHZ
+                               WAVELENGTH= 4.6122E+00 METERS
+
+
+                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS
+                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART
+                        THE EXTENDED THIN WIRE KERNEL WILL BE USED
+
+
+
+                          ------ STRUCTURE IMPEDANCE LOADING ------
+                                 THIS STRUCTURE IS NOT LOADED
+
+
+
+                            -------- ANTENNA ENVIRONMENT --------
+                            FREE SPACE
+
+
+
+                             ---------- MATRIX TIMING ----------
+                               FILL= 0 msec  FACTOR: 0 msec
+
+
+                      ----- ANTENNA INPUT PARAMETERS -----
+  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER
+  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)
+   1     1  1.0000E+00  0.0000E+00  1.2930E-05  1.4689E-03  5.9925E+00 -6.8074E+02  1.2930E-05  1.4689E-03  6.4652E-06
+
+
+
+
+
+
+
+                        ----- CURRENTS AND LOCATION -----
+                            DISTANCES IN WAVELENGTHS 
+
+   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------
+   No:  No:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE
+     1    1    0.0000    0.0000    0.0136   0.02710  1.2930E-05  1.4689E-03  1.4689E-03   89.496 
+     2    1    0.0000    0.0000    0.0407   0.02710  1.6304E-05  1.2007E-03  1.2008E-03   89.222 
+     3    1    0.0000    0.0000    0.0678   0.02710  1.9665E-05  1.0151E-03  1.0153E-03   88.890 
+     4    1    0.0000    0.0000    0.0949   0.02710  2.1496E-05  8.6010E-04  8.6037E-04   88.568 
+     5    1    0.0000    0.0000    0.1220   0.02710  2.1270E-05  7.0014E-04  7.0047E-04   88.260 
+     6    1    0.0000    0.0000    0.1491   0.02710  1.8746E-05  5.2785E-04  5.2819E-04   87.966 
+     7    1    0.0000    0.0000    0.1762   0.02710  1.3780E-05  3.4088E-04  3.4116E-04   87.685 
+     8    1    0.0000    0.0000    0.2033   0.02710  5.8926E-06  1.3071E-04  1.3084E-04   87.419 
+
+
+
+
+
+
+                       ----- SURFACE PATCH CURRENTS -----
+                            DISTANCES IN WAVELENGTHS 
+                              CURRENT IN AMPS/METER 
+
+
+                     --------- SURFACE COMPONENTS ---------
+                   --------- RECTANGULAR COMPONENTS ---------
+  PCH   --- PATCH CENTER ---     TANGENT VECTOR 1     TANGENT VECTOR 2    ------- X ------    ------- Y ------    ------- Z ------
+  No:    X       Y       Z       MAG.       PHASE     MAG.       PHASE    REAL   IMAGINARY    REAL   IMAGINARY    REAL   IMAGINARY
+    1   0.072   0.072   0.000  2.8823E-04   -97.36  2.8823E-04   -97.36  3.69E-05  2.86E-04  3.69E-05  2.86E-04 -0.00E+00 -0.00E+00 
+    2   0.072   0.000   0.000  2.0008E-19   -93.97  6.0072E-04   -93.97  4.16E-05  5.99E-04  1.39E-20  2.00E-19 -0.00E+00 -0.00E+00 
+    3   0.072  -0.072   0.000  2.8823E-04    82.64  2.8823E-04   -97.36  3.69E-05  2.86E-04 -3.69E-05 -2.86E-04  0.00E+00  0.00E+00 
+    4   0.000   0.072   0.000  6.0072E-04   -93.97  2.0008E-19   -93.97  1.39E-20  2.00E-19  4.16E-05  5.99E-04 -0.00E+00 -0.00E+00 
+    5  -0.018  -0.018   0.000  1.3410E-03    89.05  1.3410E-03    89.05 -2.22E-05 -1.34E-03 -2.22E-05 -1.34E-03  0.00E+00  0.00E+00 
+    6  -0.018   0.018   0.000  1.3410E-03   -90.95  1.3410E-03    89.05 -2.22E-05 -1.34E-03  2.22E-05  1.34E-03  0.00E+00  0.00E+00 
+    7   0.018   0.018   0.000  1.3410E-03   -90.95  1.3410E-03   -90.95  2.22E-05  1.34E-03  2.22E-05  1.34E-03 -0.00E+00 -0.00E+00 
+    8   0.018  -0.018   0.000  1.3410E-03    89.05  1.3410E-03   -90.95  2.22E-05  1.34E-03 -2.22E-05 -1.34E-03  0.00E+00  0.00E+00 
+    9   0.000  -0.072   0.000  6.0072E-04    86.03  2.0008E-19   -93.97  1.39E-20  2.00E-19 -4.16E-05 -5.99E-04  0.00E+00  0.00E+00 
+   10  -0.072   0.072   0.000  2.8823E-04   -97.36  2.8823E-04    82.64 -3.69E-05 -2.86E-04  3.69E-05  2.86E-04  0.00E+00  0.00E+00 
+   11  -0.072   0.000   0.000  2.0008E-19   -93.97  6.0072E-04    86.03 -4.16E-05 -5.99E-04  1.39E-20  2.00E-19  0.00E+00  0.00E+00 
+   12  -0.072  -0.072   0.000  2.8823E-04    82.64  2.8823E-04    82.64 -3.69E-05 -2.86E-04 -3.69E-05 -2.86E-04  0.00E+00  0.00E+00 
+
+
+
+
+
+
+                               ---------- POWER BUDGET ---------
+                               INPUT POWER   =  6.4652E-06 Watts
+                               RADIATED POWER=  6.4652E-06 Watts
+                               STRUCTURE LOSS=  0.0000E+00 Watts
+                               NETWORK LOSS  =  0.0000E+00 Watts
+                               EFFICIENCY    =  100.00 Percent
+
+
+                               --------- FREQUENCY --------
+                               FREQUENCY=  7.0000E+01 MHZ
+                               WAVELENGTH= 4.2828E+00 METERS
+
+
+                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS
+                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART
+                        THE EXTENDED THIN WIRE KERNEL WILL BE USED
+
+
+
+                          ------ STRUCTURE IMPEDANCE LOADING ------
+                                 THIS STRUCTURE IS NOT LOADED
+
+
+
+                            -------- ANTENNA ENVIRONMENT --------
+                            FREE SPACE
+
+
+
+                             ---------- MATRIX TIMING ----------
+                               FILL= 0 msec  FACTOR: 0 msec
+
+
+                      ----- ANTENNA INPUT PARAMETERS -----
+  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER
+  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)
+   1     1  1.0000E+00  0.0000E+00  1.9336E-05  1.6297E-03  7.2797E+00 -6.1353E+02  1.9336E-05  1.6297E-03  9.6681E-06
+
+
+
+
+
+
+
+                        ----- CURRENTS AND LOCATION -----
+                            DISTANCES IN WAVELENGTHS 
+
+   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------
+   No:  No:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE
+     1    1    0.0000    0.0000    0.0146   0.02919  1.9336E-05  1.6297E-03  1.6298E-03   89.320 
+     2    1    0.0000    0.0000    0.0438   0.02919  2.4346E-05  1.3490E-03  1.3492E-03   88.966 
+     3    1    0.0000    0.0000    0.0730   0.02919  2.9315E-05  1.1551E-03  1.1554E-03   88.546 
+     4    1    0.0000    0.0000    0.1022   0.02919  3.1983E-05  9.8854E-04  9.8905E-04   88.147 
+     5    1    0.0000    0.0000    0.1313   0.02919  3.1575E-05  8.1096E-04  8.1157E-04   87.770 
+     6    1    0.0000    0.0000    0.1605   0.02919  2.7752E-05  6.1490E-04  6.1552E-04   87.416 
+     7    1    0.0000    0.0000    0.1897   0.02919  2.0331E-05  3.9862E-04  3.9914E-04   87.080 
+     8    1    0.0000    0.0000    0.2189   0.02919  8.6585E-06  1.5316E-04  1.5341E-04   86.764 
+
+
+
+
+
+
+                       ----- SURFACE PATCH CURRENTS -----
+                            DISTANCES IN WAVELENGTHS 
+                              CURRENT IN AMPS/METER 
+
+
+                     --------- SURFACE COMPONENTS ---------
+                   --------- RECTANGULAR COMPONENTS ---------
+  PCH   --- PATCH CENTER ---     TANGENT VECTOR 1     TANGENT VECTOR 2    ------- X ------    ------- Y ------    ------- Z ------
+  No:    X       Y       Z       MAG.       PHASE     MAG.       PHASE    REAL   IMAGINARY    REAL   IMAGINARY    REAL   IMAGINARY
+    1   0.078   0.078   0.000  3.3374E-04   -99.02  3.3374E-04   -99.02  5.23E-05  3.30E-04  5.23E-05  3.30E-04 -0.00E+00 -0.00E+00 
+    2   0.078   0.000   0.000  2.2882E-19   -94.97  6.8700E-04   -94.97  5.95E-05  6.84E-04  1.98E-20  2.28E-19 -0.00E+00 -0.00E+00 
+    3   0.078  -0.078   0.000  3.3374E-04    80.98  3.3374E-04   -99.02  5.23E-05  3.30E-04 -5.23E-05 -3.30E-04  0.00E+00  0.00E+00 
+    4   0.000   0.078   0.000  6.8700E-04   -94.97  2.2882E-19   -94.97  1.98E-20  2.28E-19  5.95E-05  6.84E-04 -0.00E+00 -0.00E+00 
+    5  -0.019  -0.019   0.000  1.4992E-03    88.75  1.4992E-03    88.75 -3.26E-05 -1.50E-03 -3.26E-05 -1.50E-03  0.00E+00  0.00E+00 
+    6  -0.019   0.019   0.000  1.4992E-03   -91.25  1.4992E-03    88.75 -3.26E-05 -1.50E-03  3.26E-05  1.50E-03  0.00E+00  0.00E+00 
+    7   0.019   0.019   0.000  1.4992E-03   -91.25  1.4992E-03   -91.25  3.26E-05  1.50E-03  3.26E-05  1.50E-03 -0.00E+00 -0.00E+00 
+    8   0.019  -0.019   0.000  1.4992E-03    88.75  1.4992E-03   -91.25  3.26E-05  1.50E-03 -3.26E-05 -1.50E-03  0.00E+00  0.00E+00 
+    9   0.000  -0.078   0.000  6.8700E-04    85.03  2.2882E-19   -94.97  1.98E-20  2.28E-19 -5.95E-05 -6.84E-04  0.00E+00  0.00E+00 
+   10  -0.078   0.078   0.000  3.3374E-04   -99.02  3.3374E-04    80.98 -5.23E-05 -3.30E-04  5.23E-05  3.30E-04  0.00E+00  0.00E+00 
+   11  -0.078   0.000   0.000  2.2882E-19   -94.97  6.8700E-04    85.03 -5.95E-05 -6.84E-04  1.98E-20  2.28E-19  0.00E+00  0.00E+00 
+   12  -0.078  -0.078   0.000  3.3374E-04    80.98  3.3374E-04    80.98 -5.23E-05 -3.30E-04 -5.23E-05 -3.30E-04  0.00E+00  0.00E+00 
+
+
+
+
+
+
+                               ---------- POWER BUDGET ---------
+                               INPUT POWER   =  9.6681E-06 Watts
+                               RADIATED POWER=  9.6681E-06 Watts
+                               STRUCTURE LOSS=  0.0000E+00 Watts
+                               NETWORK LOSS  =  0.0000E+00 Watts
+                               EFFICIENCY    =  100.00 Percent
+
+
+                               --------- FREQUENCY --------
+                               FREQUENCY=  7.5000E+01 MHZ
+                               WAVELENGTH= 3.9973E+00 METERS
+
+
+                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS
+                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART
+                        THE EXTENDED THIN WIRE KERNEL WILL BE USED
+
+
+
+                          ------ STRUCTURE IMPEDANCE LOADING ------
+                                 THIS STRUCTURE IS NOT LOADED
+
+
+
+                            -------- ANTENNA ENVIRONMENT --------
+                            FREE SPACE
+
+
+
+                             ---------- MATRIX TIMING ----------
+                               FILL= 0 msec  FACTOR: 0 msec
+
+
+                      ----- ANTENNA INPUT PARAMETERS -----
+  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER
+  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)
+   1     1  1.0000E+00  0.0000E+00  2.8758E-05  1.8071E-03  8.8040E+00 -5.5323E+02  2.8758E-05  1.8071E-03  1.4379E-05
+
+
+
+
+
+
+
+                        ----- CURRENTS AND LOCATION -----
+                            DISTANCES IN WAVELENGTHS 
+
+   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------
+   No:  No:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE
+     1    1    0.0000    0.0000    0.0156   0.03127  2.8758E-05  1.8071E-03  1.8073E-03   89.088 
+     2    1    0.0000    0.0000    0.0469   0.03127  3.6155E-05  1.5170E-03  1.5174E-03   88.635 
+     3    1    0.0000    0.0000    0.0782   0.03127  4.3453E-05  1.3172E-03  1.3180E-03   88.111 
+     4    1    0.0000    0.0000    0.1094   0.03127  4.7310E-05  1.1397E-03  1.1406E-03   87.623 
+     5    1    0.0000    0.0000    0.1407   0.03127  4.6595E-05  9.4274E-04  9.4389E-04   87.170 
+     6    1    0.0000    0.0000    0.1720   0.03127  4.0832E-05  7.1916E-04  7.2032E-04   86.750 
+     7    1    0.0000    0.0000    0.2033   0.03127  2.9806E-05  4.6809E-04  4.6904E-04   86.357 
+     8    1    0.0000    0.0000    0.2345   0.03127  1.2638E-05  1.8023E-04  1.8067E-04   85.989 
+
+
+
+
+
+
+                       ----- SURFACE PATCH CURRENTS -----
+                            DISTANCES IN WAVELENGTHS 
+                              CURRENT IN AMPS/METER 
+
+
+                     --------- SURFACE COMPONENTS ---------
+                   --------- RECTANGULAR COMPONENTS ---------
+  PCH   --- PATCH CENTER ---     TANGENT VECTOR 1     TANGENT VECTOR 2    ------- X ------    ------- Y ------    ------- Z ------
+  No:    X       Y       Z       MAG.       PHASE     MAG.       PHASE    REAL   IMAGINARY    REAL   IMAGINARY    REAL   IMAGINARY
+    1   0.083   0.083   0.000  3.8714E-04  -100.91  3.8714E-04  -100.91  7.33E-05  3.80E-04  7.33E-05  3.80E-04 -0.00E+00 -0.00E+00 
+    2   0.083   0.000   0.000  2.6212E-19   -96.14  7.8699E-04   -96.14  8.42E-05  7.82E-04  2.80E-20  2.61E-19 -0.00E+00 -0.00E+00 
+    3   0.083  -0.083   0.000  3.8714E-04    79.09  3.8714E-04  -100.91  7.33E-05  3.80E-04 -7.33E-05 -3.80E-04  0.00E+00  0.00E+00 
+    4   0.000   0.083   0.000  7.8699E-04   -96.14  2.6212E-19   -96.14  2.80E-20  2.61E-19  8.42E-05  7.82E-04 -0.00E+00 -0.00E+00 
+    5  -0.021  -0.021   0.000  1.6764E-03    88.38  1.6764E-03    88.38 -4.75E-05 -1.68E-03 -4.75E-05 -1.68E-03  0.00E+00  0.00E+00 
+    6  -0.021   0.021   0.000  1.6764E-03   -91.62  1.6764E-03    88.38 -4.75E-05 -1.68E-03  4.75E-05  1.68E-03  0.00E+00  0.00E+00 
+    7   0.021   0.021   0.000  1.6764E-03   -91.62  1.6764E-03   -91.62  4.75E-05  1.68E-03  4.75E-05  1.68E-03 -0.00E+00 -0.00E+00 
+    8   0.021  -0.021   0.000  1.6764E-03    88.38  1.6764E-03   -91.62  4.75E-05  1.68E-03 -4.75E-05 -1.68E-03  0.00E+00  0.00E+00 
+    9   0.000  -0.083   0.000  7.8699E-04    83.86  2.6212E-19   -96.14  2.80E-20  2.61E-19 -8.42E-05 -7.82E-04  0.00E+00  0.00E+00 
+   10  -0.083   0.083   0.000  3.8714E-04  -100.91  3.8714E-04    79.09 -7.33E-05 -3.80E-04  7.33E-05  3.80E-04  0.00E+00  0.00E+00 
+   11  -0.083   0.000   0.000  2.6212E-19   -96.14  7.8699E-04    83.86 -8.42E-05 -7.82E-04  2.80E-20  2.61E-19  0.00E+00  0.00E+00 
+   12  -0.083  -0.083   0.000  3.8714E-04    79.09  3.8714E-04    79.09 -7.33E-05 -3.80E-04 -7.33E-05 -3.80E-04  0.00E+00  0.00E+00 
+
+
+
+
+
+
+                               ---------- POWER BUDGET ---------
+                               INPUT POWER   =  1.4379E-05 Watts
+                               RADIATED POWER=  1.4379E-05 Watts
+                               STRUCTURE LOSS=  0.0000E+00 Watts
+                               NETWORK LOSS  =  0.0000E+00 Watts
+                               EFFICIENCY    =  100.00 Percent
+
+
+                               --------- FREQUENCY --------
+                               FREQUENCY=  8.0000E+01 MHZ
+                               WAVELENGTH= 3.7474E+00 METERS
+
+
+                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS
+                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART
+                        THE EXTENDED THIN WIRE KERNEL WILL BE USED
+
+
+
+                          ------ STRUCTURE IMPEDANCE LOADING ------
+                                 THIS STRUCTURE IS NOT LOADED
+
+
+
+                            -------- ANTENNA ENVIRONMENT --------
+                            FREE SPACE
+
+
+
+                             ---------- MATRIX TIMING ----------
+                               FILL= 0 msec  FACTOR: 0 msec
+
+
+                      ----- ANTENNA INPUT PARAMETERS -----
+  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER
+  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)
+   1     1  1.0000E+00  0.0000E+00  4.2766E-05  2.0060E-03  1.0623E+01 -4.9827E+02  4.2766E-05  2.0060E-03  2.1383E-05
+
+
+
+
+
+
+
+                        ----- CURRENTS AND LOCATION -----
+                            DISTANCES IN WAVELENGTHS 
+
+   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------
+   No:  No:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE
+     1    1    0.0000    0.0000    0.0167   0.03336  4.2766E-05  2.0060E-03  2.0065E-03   88.779 
+     2    1    0.0000    0.0000    0.0500   0.03336  5.3678E-05  1.7106E-03  1.7114E-03   88.203 
+     3    1    0.0000    0.0000    0.0834   0.03336  6.4386E-05  1.5083E-03  1.5097E-03   87.556 
+     4    1    0.0000    0.0000    0.1167   0.03336  6.9947E-05  1.3204E-03  1.3223E-03   86.968 
+     5    1    0.0000    0.0000    0.1501   0.03336  6.8714E-05  1.1020E-03  1.1041E-03   86.432 
+     6    1    0.0000    0.0000    0.1835   0.03336  6.0028E-05  8.4603E-04  8.4816E-04   85.942 
+     7    1    0.0000    0.0000    0.2168   0.03336  4.3650E-05  5.5298E-04  5.5470E-04   85.487 
+     8    1    0.0000    0.0000    0.2502   0.03336  1.8423E-05  2.1337E-04  2.1417E-04   85.065 
+
+
+
+
+
+
+                       ----- SURFACE PATCH CURRENTS -----
+                            DISTANCES IN WAVELENGTHS 
+                              CURRENT IN AMPS/METER 
+
+
+                     --------- SURFACE COMPONENTS ---------
+                   --------- RECTANGULAR COMPONENTS ---------
+  PCH   --- PATCH CENTER ---     TANGENT VECTOR 1     TANGENT VECTOR 2    ------- X ------    ------- Y ------    ------- Z ------
+  No:    X       Y       Z       MAG.       PHASE     MAG.       PHASE    REAL   IMAGINARY    REAL   IMAGINARY    REAL   IMAGINARY
+    1   0.089   0.089   0.000  4.5066E-04  -103.05  4.5066E-04  -103.05  1.02E-04  4.39E-04  1.02E-04  4.39E-04 -0.00E+00 -0.00E+00 
+    2   0.089   0.000   0.000  3.0129E-19   -97.51  9.0459E-04   -97.51  1.18E-04  8.97E-04  3.94E-20  2.99E-19 -0.00E+00 -0.00E+00 
+    3   0.089  -0.089   0.000  4.5066E-04    76.95  4.5066E-04  -103.05  1.02E-04  4.39E-04 -1.02E-04 -4.39E-04  0.00E+00  0.00E+00 
+    4   0.000   0.089   0.000  9.0459E-04   -97.51  3.0129E-19   -97.51  3.94E-20  2.99E-19  1.18E-04  8.97E-04 -0.00E+00 -0.00E+00 
+    5  -0.022  -0.022   0.000  1.8783E-03    87.89  1.8783E-03    87.89 -6.91E-05 -1.88E-03 -6.91E-05 -1.88E-03  0.00E+00  0.00E+00 
+    6  -0.022   0.022   0.000  1.8783E-03   -92.11  1.8783E-03    87.89 -6.91E-05 -1.88E-03  6.91E-05  1.88E-03  0.00E+00  0.00E+00 
+    7   0.022   0.022   0.000  1.8783E-03   -92.11  1.8783E-03   -92.11  6.91E-05  1.88E-03  6.91E-05  1.88E-03 -0.00E+00 -0.00E+00 
+    8   0.022  -0.022   0.000  1.8783E-03    87.89  1.8783E-03   -92.11  6.91E-05  1.88E-03 -6.91E-05 -1.88E-03  0.00E+00  0.00E+00 
+    9   0.000  -0.089   0.000  9.0459E-04    82.49  3.0129E-19   -97.51  3.94E-20  2.99E-19 -1.18E-04 -8.97E-04  0.00E+00  0.00E+00 
+   10  -0.089   0.089   0.000  4.5066E-04  -103.05  4.5066E-04    76.95 -1.02E-04 -4.39E-04  1.02E-04  4.39E-04  0.00E+00  0.00E+00 
+   11  -0.089   0.000   0.000  3.0129E-19   -97.51  9.0459E-04    82.49 -1.18E-04 -8.97E-04  3.94E-20  2.99E-19  0.00E+00  0.00E+00 
+   12  -0.089  -0.089   0.000  4.5066E-04    76.95  4.5066E-04    76.95 -1.02E-04 -4.39E-04 -1.02E-04 -4.39E-04  0.00E+00  0.00E+00 
+
+
+
+
+
+
+                               ---------- POWER BUDGET ---------
+                               INPUT POWER   =  2.1383E-05 Watts
+                               RADIATED POWER=  2.1383E-05 Watts
+                               STRUCTURE LOSS=  0.0000E+00 Watts
+                               NETWORK LOSS  =  0.0000E+00 Watts
+                               EFFICIENCY    =  100.00 Percent
+
+
+                               --------- FREQUENCY --------
+                               FREQUENCY=  8.5000E+01 MHZ
+                               WAVELENGTH= 3.5270E+00 METERS
+
+
+                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS
+                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART
+                        THE EXTENDED THIN WIRE KERNEL WILL BE USED
+
+
+
+                          ------ STRUCTURE IMPEDANCE LOADING ------
+                                 THIS STRUCTURE IS NOT LOADED
+
+
+
+                            -------- ANTENNA ENVIRONMENT --------
+                            FREE SPACE
+
+
+
+                             ---------- MATRIX TIMING ----------
+                               FILL= 0 msec  FACTOR: 0 msec
+
+
+                      ----- ANTENNA INPUT PARAMETERS -----
+  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER
+  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)
+   1     1  1.0000E+00  0.0000E+00  6.3952E-05  2.2332E-03  1.2813E+01 -4.4743E+02  6.3952E-05  2.2332E-03  3.1976E-05
+
+
+
+
+
+
+
+                        ----- CURRENTS AND LOCATION -----
+                            DISTANCES IN WAVELENGTHS 
+
+   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------
+   No:  No:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE
+     1    1    0.0000    0.0000    0.0177   0.03544  6.3952E-05  2.2332E-03  2.2341E-03   88.360 
+     2    1    0.0000    0.0000    0.0532   0.03544  8.0130E-05  1.9380E-03  1.9397E-03   87.632 
+     3    1    0.0000    0.0000    0.0886   0.03544  9.5914E-05  1.7379E-03  1.7405E-03   86.841 
+     4    1    0.0000    0.0000    0.1240   0.03544  1.0396E-04  1.5407E-03  1.5442E-03   86.140 
+     5    1    0.0000    0.0000    0.1595   0.03544  1.0185E-04  1.2980E-03  1.3020E-03   85.514 
+     6    1    0.0000    0.0000    0.1949   0.03544  8.8679E-05  1.0032E-03  1.0072E-03   84.949 
+     7    1    0.0000    0.0000    0.2304   0.03544  6.4222E-05  6.5858E-04  6.6171E-04   84.430 
+     8    1    0.0000    0.0000    0.2658   0.03544  2.6973E-05  2.5467E-04  2.5609E-04   83.954 
+
+
+
+
+
+
+                       ----- SURFACE PATCH CURRENTS -----
+                            DISTANCES IN WAVELENGTHS 
+                              CURRENT IN AMPS/METER 
+
+
+                     --------- SURFACE COMPONENTS ---------
+                   --------- RECTANGULAR COMPONENTS ---------
+  PCH   --- PATCH CENTER ---     TANGENT VECTOR 1     TANGENT VECTOR 2    ------- X ------    ------- Y ------    ------- Z ------
+  No:    X       Y       Z       MAG.       PHASE     MAG.       PHASE    REAL   IMAGINARY    REAL   IMAGINARY    REAL   IMAGINARY
+    1   0.095   0.095   0.000  5.2749E-04  -105.48  5.2749E-04  -105.48  1.41E-04  5.08E-04  1.41E-04  5.08E-04 -0.00E+00 -0.00E+00 
+    2   0.095   0.000   0.000  3.4817E-19   -99.13  1.0453E-03   -99.13  1.66E-04  1.03E-03  5.53E-20  3.44E-19 -0.00E+00 -0.00E+00 
+    3   0.095  -0.095   0.000  5.2749E-04    74.52  5.2749E-04  -105.48  1.41E-04  5.08E-04 -1.41E-04 -5.08E-04  0.00E+00  0.00E+00 
+    4   0.000   0.095   0.000  1.0453E-03   -99.13  3.4817E-19   -99.13  5.53E-20  3.44E-19  1.66E-04  1.03E-03 -0.00E+00 -0.00E+00 
+    5  -0.024  -0.024   0.000  2.1126E-03    87.27  2.1126E-03    87.27 -1.01E-04 -2.11E-03 -1.01E-04 -2.11E-03  0.00E+00  0.00E+00 
+    6  -0.024   0.024   0.000  2.1126E-03   -92.73  2.1126E-03    87.27 -1.01E-04 -2.11E-03  1.01E-04  2.11E-03  0.00E+00  0.00E+00 
+    7   0.024   0.024   0.000  2.1126E-03   -92.73  2.1126E-03   -92.73  1.01E-04  2.11E-03  1.01E-04  2.11E-03 -0.00E+00 -0.00E+00 
+    8   0.024  -0.024   0.000  2.1126E-03    87.27  2.1126E-03   -92.73  1.01E-04  2.11E-03 -1.01E-04 -2.11E-03  0.00E+00  0.00E+00 
+    9   0.000  -0.095   0.000  1.0453E-03    80.87  3.4817E-19   -99.13  5.53E-20  3.44E-19 -1.66E-04 -1.03E-03  0.00E+00  0.00E+00 
+   10  -0.095   0.095   0.000  5.2749E-04  -105.48  5.2749E-04    74.52 -1.41E-04 -5.08E-04  1.41E-04  5.08E-04  0.00E+00  0.00E+00 
+   11  -0.095   0.000   0.000  3.4817E-19   -99.13  1.0453E-03    80.87 -1.66E-04 -1.03E-03  5.53E-20  3.44E-19  0.00E+00  0.00E+00 
+   12  -0.095  -0.095   0.000  5.2749E-04    74.52  5.2749E-04    74.52 -1.41E-04 -5.08E-04 -1.41E-04 -5.08E-04  0.00E+00  0.00E+00 
+
+
+
+
+
+
+                               ---------- POWER BUDGET ---------
+                               INPUT POWER   =  3.1976E-05 Watts
+                               RADIATED POWER=  3.1976E-05 Watts
+                               STRUCTURE LOSS=  0.0000E+00 Watts
+                               NETWORK LOSS  =  0.0000E+00 Watts
+                               EFFICIENCY    =  100.00 Percent
+
+
+                               --------- FREQUENCY --------
+                               FREQUENCY=  9.0000E+01 MHZ
+                               WAVELENGTH= 3.3311E+00 METERS
+
+
+                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS
+                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART
+                        THE EXTENDED THIN WIRE KERNEL WILL BE USED
+
+
+
+                          ------ STRUCTURE IMPEDANCE LOADING ------
+                                 THIS STRUCTURE IS NOT LOADED
+
+
+
+                            -------- ANTENNA ENVIRONMENT --------
+                            FREE SPACE
+
+
+
+                             ---------- MATRIX TIMING ----------
+                               FILL= 0 msec  FACTOR: 0 msec
+
+
+                      ----- ANTENNA INPUT PARAMETERS -----
+  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER
+  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)
+   1     1  1.0000E+00  0.0000E+00  9.6800E-05  2.4984E-03  1.5484E+01 -3.9965E+02  9.6800E-05  2.4984E-03  4.8400E-05
+
+
+
+
+
+
+
+                        ----- CURRENTS AND LOCATION -----
+                            DISTANCES IN WAVELENGTHS 
+
+   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------
+   No:  No:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE
+     1    1    0.0000    0.0000    0.0188   0.03753  9.6800E-05  2.4984E-03  2.5003E-03   87.781 
+     2    1    0.0000    0.0000    0.0563   0.03753  1.2107E-04  2.2114E-03  2.2147E-03   86.866 
+     3    1    0.0000    0.0000    0.0938   0.03753  1.4459E-04  2.0198E-03  2.0249E-03   85.905 
+     4    1    0.0000    0.0000    0.1313   0.03753  1.5633E-04  1.8152E-03  1.8219E-03   85.078 
+     5    1    0.0000    0.0000    0.1689   0.03753  1.5271E-04  1.5445E-03  1.5521E-03   84.353 
+     6    1    0.0000    0.0000    0.2064   0.03753  1.3251E-04  1.2022E-03  1.2094E-03   83.710 
+     7    1    0.0000    0.0000    0.2439   0.03753  9.5554E-05  7.9271E-04  7.9845E-04   83.127 
+     8    1    0.0000    0.0000    0.2814   0.03753  3.9925E-05  3.0720E-04  3.0978E-04   82.595 
+
+
+
+
+
+
+                       ----- SURFACE PATCH CURRENTS -----
+                            DISTANCES IN WAVELENGTHS 
+                              CURRENT IN AMPS/METER 
+
+
+                     --------- SURFACE COMPONENTS ---------
+                   --------- RECTANGULAR COMPONENTS ---------
+  PCH   --- PATCH CENTER ---     TANGENT VECTOR 1     TANGENT VECTOR 2    ------- X ------    ------- Y ------    ------- Z ------
+  No:    X       Y       Z       MAG.       PHASE     MAG.       PHASE    REAL   IMAGINARY    REAL   IMAGINARY    REAL   IMAGINARY
+    1   0.100   0.100   0.000  6.2235E-04  -108.27  6.2235E-04  -108.27  1.95E-04  5.91E-04  1.95E-04  5.91E-04 -0.00E+00 -0.00E+00 
+    2   0.100   0.000   0.000  4.0550E-19  -101.06  1.2175E-03  -101.06  2.34E-04  1.19E-03  7.78E-20  3.98E-19 -0.00E+00 -0.00E+00 
+    3   0.100  -0.100   0.000  6.2235E-04    71.73  6.2235E-04  -108.27  1.95E-04  5.91E-04 -1.95E-04 -5.91E-04  0.00E+00  0.00E+00 
+    4   0.000   0.100   0.000  1.2175E-03  -101.06  4.0550E-19  -101.06  7.78E-20  3.98E-19  2.34E-04  1.19E-03 -0.00E+00 -0.00E+00 
+    5  -0.025  -0.025   0.000  2.3908E-03    86.44  2.3908E-03    86.44 -1.48E-04 -2.39E-03 -1.48E-04 -2.39E-03  0.00E+00  0.00E+00 
+    6  -0.025   0.025   0.000  2.3908E-03   -93.56  2.3908E-03    86.44 -1.48E-04 -2.39E-03  1.48E-04  2.39E-03  0.00E+00  0.00E+00 
+    7   0.025   0.025   0.000  2.3908E-03   -93.56  2.3908E-03   -93.56  1.48E-04  2.39E-03  1.48E-04  2.39E-03 -0.00E+00 -0.00E+00 
+    8   0.025  -0.025   0.000  2.3908E-03    86.44  2.3908E-03   -93.56  1.48E-04  2.39E-03 -1.48E-04 -2.39E-03  0.00E+00  0.00E+00 
+    9   0.000  -0.100   0.000  1.2175E-03    78.94  4.0550E-19  -101.06  7.78E-20  3.98E-19 -2.34E-04 -1.19E-03  0.00E+00  0.00E+00 
+   10  -0.100   0.100   0.000  6.2235E-04  -108.27  6.2235E-04    71.73 -1.95E-04 -5.91E-04  1.95E-04  5.91E-04  0.00E+00  0.00E+00 
+   11  -0.100   0.000   0.000  4.0550E-19  -101.06  1.2175E-03    78.94 -2.34E-04 -1.19E-03  7.78E-20  3.98E-19  0.00E+00  0.00E+00 
+   12  -0.100  -0.100   0.000  6.2235E-04    71.73  6.2235E-04    71.73 -1.95E-04 -5.91E-04 -1.95E-04 -5.91E-04  0.00E+00  0.00E+00 
+
+
+
+
+
+
+                               ---------- POWER BUDGET ---------
+                               INPUT POWER   =  4.8400E-05 Watts
+                               RADIATED POWER=  4.8400E-05 Watts
+                               STRUCTURE LOSS=  0.0000E+00 Watts
+                               NETWORK LOSS  =  0.0000E+00 Watts
+                               EFFICIENCY    =  100.00 Percent
+
+
+                               --------- FREQUENCY --------
+                               FREQUENCY=  9.5000E+01 MHZ
+                               WAVELENGTH= 3.1557E+00 METERS
+
+
+                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS
+                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART
+                        THE EXTENDED THIN WIRE KERNEL WILL BE USED
+
+
+
+                          ------ STRUCTURE IMPEDANCE LOADING ------
+                                 THIS STRUCTURE IS NOT LOADED
+
+
+
+                            -------- ANTENNA ENVIRONMENT --------
+                            FREE SPACE
+
+
+
+                             ---------- MATRIX TIMING ----------
+                               FILL= 0 msec  FACTOR: 0 msec
+
+
+                      ----- ANTENNA INPUT PARAMETERS -----
+  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER
+  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)
+   1     1  1.0000E+00  0.0000E+00  1.4951E-04  2.8169E-03  1.8789E+01 -3.5400E+02  1.4951E-04  2.8169E-03  7.4756E-05
+
+
+
+
+
+
+
+                        ----- CURRENTS AND LOCATION -----
+                            DISTANCES IN WAVELENGTHS 
+
+   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------
+   No:  No:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE
+     1    1    0.0000    0.0000    0.0198   0.03961  1.4951E-04  2.8169E-03  2.8209E-03   86.962 
+     2    1    0.0000    0.0000    0.0594   0.03961  1.8663E-04  2.5489E-03  2.5557E-03   85.812 
+     3    1    0.0000    0.0000    0.0990   0.03961  2.2237E-04  2.3753E-03  2.3857E-03   84.652 
+     4    1    0.0000    0.0000    0.1386   0.03961  2.3978E-04  2.1659E-03  2.1791E-03   83.683 
+     5    1    0.0000    0.0000    0.1782   0.03961  2.3353E-04  1.8624E-03  1.8770E-03   82.853 
+     6    1    0.0000    0.0000    0.2179   0.03961  2.0189E-04  1.4602E-03  1.4741E-03   82.128 
+     7    1    0.0000    0.0000    0.2575   0.03961  1.4493E-04  9.6727E-04  9.7807E-04   81.479 
+     8    1    0.0000    0.0000    0.2971   0.03961  6.0226E-05  3.7565E-04  3.8045E-04   80.892 
+
+
+
+
+
+
+                       ----- SURFACE PATCH CURRENTS -----
+                            DISTANCES IN WAVELENGTHS 
+                              CURRENT IN AMPS/METER 
+
+
+                     --------- SURFACE COMPONENTS ---------
+                   --------- RECTANGULAR COMPONENTS ---------
+  PCH   --- PATCH CENTER ---     TANGENT VECTOR 1     TANGENT VECTOR 2    ------- X ------    ------- Y ------    ------- Z ------
+  No:    X       Y       Z       MAG.       PHASE     MAG.       PHASE    REAL   IMAGINARY    REAL   IMAGINARY    REAL   IMAGINARY
+    1   0.106   0.106   0.000  7.4257E-04  -111.51  7.4257E-04  -111.51  2.72E-04  6.91E-04  2.72E-04  6.91E-04 -0.00E+00 -0.00E+00 
+    2   0.106   0.000   0.000  4.7751E-19  -103.40  1.4337E-03  -103.40  3.32E-04  1.39E-03  1.11E-19  4.64E-19 -0.00E+00 -0.00E+00 
+    3   0.106  -0.106   0.000  7.4257E-04    68.49  7.4257E-04  -111.51  2.72E-04  6.91E-04 -2.72E-04 -6.91E-04  0.00E+00  0.00E+00 
+    4   0.000   0.106   0.000  1.4337E-03  -103.40  4.7751E-19  -103.40  1.11E-19  4.64E-19  3.32E-04  1.39E-03 -0.00E+00 -0.00E+00 
+    5  -0.026  -0.026   0.000  2.7308E-03    85.33  2.7308E-03    85.33 -2.22E-04 -2.72E-03 -2.22E-04 -2.72E-03  0.00E+00  0.00E+00 
+    6  -0.026   0.026   0.000  2.7308E-03   -94.67  2.7308E-03    85.33 -2.22E-04 -2.72E-03  2.22E-04  2.72E-03  0.00E+00  0.00E+00 
+    7   0.026   0.026   0.000  2.7308E-03   -94.67  2.7308E-03   -94.67  2.22E-04  2.72E-03  2.22E-04  2.72E-03 -0.00E+00 -0.00E+00 
+    8   0.026  -0.026   0.000  2.7308E-03    85.33  2.7308E-03   -94.67  2.22E-04  2.72E-03 -2.22E-04 -2.72E-03  0.00E+00  0.00E+00 
+    9   0.000  -0.106   0.000  1.4337E-03    76.60  4.7751E-19  -103.40  1.11E-19  4.64E-19 -3.32E-04 -1.39E-03  0.00E+00  0.00E+00 
+   10  -0.106   0.106   0.000  7.4257E-04  -111.51  7.4257E-04    68.49 -2.72E-04 -6.91E-04  2.72E-04  6.91E-04  0.00E+00  0.00E+00 
+   11  -0.106   0.000   0.000  4.7751E-19  -103.40  1.4337E-03    76.60 -3.32E-04 -1.39E-03  1.11E-19  4.64E-19  0.00E+00  0.00E+00 
+   12  -0.106  -0.106   0.000  7.4257E-04    68.49  7.4257E-04    68.49 -2.72E-04 -6.91E-04 -2.72E-04 -6.91E-04  0.00E+00  0.00E+00 
+
+
+
+
+
+
+                               ---------- POWER BUDGET ---------
+                               INPUT POWER   =  7.4756E-05 Watts
+                               RADIATED POWER=  7.4756E-05 Watts
+                               STRUCTURE LOSS=  0.0000E+00 Watts
+                               NETWORK LOSS  =  0.0000E+00 Watts
+                               EFFICIENCY    =  100.00 Percent
+
+
+                               --------- FREQUENCY --------
+                               FREQUENCY=  1.0000E+02 MHZ
+                               WAVELENGTH= 2.9980E+00 METERS
+
+
+                        APPROXIMATE INTEGRATION EMPLOYED FOR SEGMENTS
+                        THAT ARE MORE THAN 1.000 WAVELENGTHS APART
+                        THE EXTENDED THIN WIRE KERNEL WILL BE USED
+
+
+
+                          ------ STRUCTURE IMPEDANCE LOADING ------
+                                 THIS STRUCTURE IS NOT LOADED
+
+
+
+                            -------- ANTENNA ENVIRONMENT --------
+                            FREE SPACE
+
+
+
+                             ---------- MATRIX TIMING ----------
+                               FILL= 0 msec  FACTOR: 0 msec
+
+
+                      ----- ANTENNA INPUT PARAMETERS -----
+  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER
+  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)
+   1     1  1.0000E+00  0.0000E+00  2.3815E-04  3.2123E-03  2.2953E+01 -3.0960E+02  2.3815E-04  3.2123E-03  1.1907E-04
+
+
+
+
+
+
+
+                        ----- CURRENTS AND LOCATION -----
+                            DISTANCES IN WAVELENGTHS 
+
+   SEG  TAG    COORDINATES OF SEGM CENTER     SEGM    ------------- CURRENT (AMPS) -------------
+   No:  No:       X         Y         Z      LENGTH     REAL      IMAGINARY    MAGN        PHASE
+     1    1    0.0000    0.0000    0.0208   0.04170  2.3815E-04  3.2123E-03  3.2211E-03   85.760 
+     2    1    0.0000    0.0000    0.0625   0.04170  2.9666E-04  2.9797E-03  2.9944E-03   84.314 
+     3    1    0.0000    0.0000    0.1042   0.04170  3.5258E-04  2.8380E-03  2.8599E-03   82.918 
+     4    1    0.0000    0.0000    0.1459   0.04170  3.7914E-04  2.6281E-03  2.6553E-03   81.791 
+     5    1    0.0000    0.0000    0.1876   0.04170  3.6807E-04  2.2848E-03  2.3143E-03   80.849 
+     6    1    0.0000    0.0000    0.2293   0.04170  3.1697E-04  1.8048E-03  1.8324E-03   80.039 
+     7    1    0.0000    0.0000    0.2710   0.04170  2.2646E-04  1.2011E-03  1.2223E-03   79.323 
+     8    1    0.0000    0.0000    0.3127   0.04170  9.3567E-05  4.6744E-04  4.7671E-04   78.681 
+
+
+
+
+
+
+                       ----- SURFACE PATCH CURRENTS -----
+                            DISTANCES IN WAVELENGTHS 
+                              CURRENT IN AMPS/METER 
+
+
+                     --------- SURFACE COMPONENTS ---------
+                   --------- RECTANGULAR COMPONENTS ---------
+  PCH   --- PATCH CENTER ---     TANGENT VECTOR 1     TANGENT VECTOR 2    ------- X ------    ------- Y ------    ------- Z ------
+  No:    X       Y       Z       MAG.       PHASE     MAG.       PHASE    REAL   IMAGINARY    REAL   IMAGINARY    REAL   IMAGINARY
+    1   0.111   0.111   0.000  9.0011E-04  -115.37  9.0011E-04  -115.37  3.86E-04  8.13E-04  3.86E-04  8.13E-04 -0.00E+00 -0.00E+00 
+    2   0.111   0.000   0.000  5.7108E-19  -106.32  1.7146E-03  -106.32  4.82E-04  1.65E-03  1.60E-19  5.48E-19 -0.00E+00 -0.00E+00 
+    3   0.111  -0.111   0.000  9.0011E-04    64.63  9.0011E-04  -115.37  3.86E-04  8.13E-04 -3.86E-04 -8.13E-04  0.00E+00  0.00E+00 
+    4   0.000   0.111   0.000  1.7146E-03  -106.32  5.7108E-19  -106.32  1.60E-19  5.48E-19  4.82E-04  1.65E-03 -0.00E+00 -0.00E+00 
+    5  -0.028  -0.028   0.000  3.1612E-03    83.77  3.1612E-03    83.77 -3.43E-04 -3.14E-03 -3.43E-04 -3.14E-03  0.00E+00  0.00E+00 
+    6  -0.028   0.028   0.000  3.1612E-03   -96.23  3.1612E-03    83.77 -3.43E-04 -3.14E-03  3.43E-04  3.14E-03  0.00E+00  0.00E+00 
+    7   0.028   0.028   0.000  3.1612E-03   -96.23  3.1612E-03   -96.23  3.43E-04  3.14E-03  3.43E-04  3.14E-03 -0.00E+00 -0.00E+00 
+    8   0.028  -0.028   0.000  3.1612E-03    83.77  3.1612E-03   -96.23  3.43E-04  3.14E-03 -3.43E-04 -3.14E-03  0.00E+00  0.00E+00 
+    9   0.000  -0.111   0.000  1.7146E-03    73.68  5.7108E-19  -106.32  1.60E-19  5.48E-19 -4.82E-04 -1.65E-03  0.00E+00  0.00E+00 
+   10  -0.111   0.111   0.000  9.0011E-04  -115.37  9.0011E-04    64.63 -3.86E-04 -8.13E-04  3.86E-04  8.13E-04  0.00E+00  0.00E+00 
+   11  -0.111   0.000   0.000  5.7108E-19  -106.32  1.7146E-03    73.68 -4.82E-04 -1.65E-03  1.60E-19  5.48E-19  0.00E+00  0.00E+00 
+   12  -0.111  -0.111   0.000  9.0011E-04    64.63  9.0011E-04    64.63 -3.86E-04 -8.13E-04 -3.86E-04 -8.13E-04  0.00E+00  0.00E+00 
+
+
+
+
+
+
+                               ---------- POWER BUDGET ---------
+                               INPUT POWER   =  1.1907E-04 Watts
+                               RADIATED POWER=  1.1907E-04 Watts
+                               STRUCTURE LOSS=  0.0000E+00 Watts
+                               NETWORK LOSS  =  0.0000E+00 Watts
+                               EFFICIENCY    =  100.00 Percent
+*****  DATA CARD N0.   5 EN   0     0     0     0  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00  0.00000E+00
+
+  TOTAL RUN TIME: 0 msec
