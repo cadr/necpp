@@ -17,7 +17,13 @@ function parseArgs() {
     const args = process.argv.slice(2);
     const options = {
         input: null,
-        output: null
+        output: null,
+        version: false,
+        stdout: false,
+        csv: false,
+        xml: false,
+        gainOnly: false,
+        benchmark: false
     };
 
     for (let i = 0; i < args.length; i++) {
@@ -28,19 +34,55 @@ function parseArgs() {
             options.output = args[i + 1];
             i++;
         } else if (args[i] === '-h' || args[i] === '--help') {
-            console.log('Usage: node nec_wasm.js -i input.nec -o output.out');
-            console.log('  -i  Input NEC file');
-            console.log('  -o  Output file');
+            console.log('usage: nec2++ [-i<input-file-name>] [-o<output-file-name>]');
+            console.log('       -g: print maximum gain to stdout.');
+            console.log('       -b: Perform NEC++ Benchmark.');
+            console.log('       -s: print results to standard output.');
+            console.log('       -c: print results in comma-separated-value (CSV) format,');
+            console.log('           this option is used in conjunction with (-s) above.');
+            console.log('       -x: print results in XML format,');
+            console.log('           this option is used in conjunction with (-s) above.');
+            console.log('       -h: print this usage information and exit.');
+            console.log('       -v: print nec2++ version number and exit.');
             process.exit(0);
+        } else if (args[i] === '-v' || args[i] === '--version') {
+            options.version = true;
+        } else if (args[i] === '-s') {
+            options.stdout = true;
+        } else if (args[i] === '-c') {
+            options.csv = true;
+        } else if (args[i] === '-x') {
+            options.xml = true;
+        } else if (args[i] === '-g') {
+            options.gainOnly = true;
+        } else if (args[i] === '-b') {
+            options.benchmark = true;
         }
     }
 
-    if (!options.input) {
+    // Handle version flag
+    if (options.version) {
+        console.log('nec2++ 1.7.5-wasm [WASM/Node.js]');
+        process.exit(0);
+    }
+
+    // Handle benchmark flag (doesn't need input file)
+    if (options.benchmark) {
+        return options;
+    }
+
+    // Gain-only mode also doesn't strictly require output file
+    if (options.gainOnly && !options.input) {
         console.error('Error: Input file (-i) is required');
         process.exit(1);
     }
 
-    if (!options.output) {
+    if (!options.input && !options.benchmark) {
+        console.error('Error: Input file (-i) is required');
+        process.exit(1);
+    }
+
+    if (!options.output && options.input) {
         // Default output filename
         options.output = options.input.replace(/\.nec$/, '.outwasm');
     }
@@ -250,7 +292,7 @@ class OutputFormatter {
 }
 
 // Process NEC file with WASM module
-async function processNecFile(inputFile, outputFile) {
+async function processNecFile(inputFile, outputFile, options = {}) {
     const scriptDir = __dirname;
     const createNecppModule = require(path.join(scriptDir, 'necpp.js'));
 
@@ -271,8 +313,11 @@ async function processNecFile(inputFile, outputFile) {
         }
     }
 
-    // Load WASM module
-    const Module = await createNecppModule();
+    // Load WASM module with debug output redirected to stderr
+    const Module = await createNecppModule({
+        print: (text) => console.error(text),    // Redirect stdout from WASM to stderr
+        printErr: (text) => console.error(text)  // Keep stderr as stderr
+    });
     const nec = new Module.NecppWrapper();
 
     try {
@@ -284,6 +329,17 @@ async function processNecFile(inputFile, outputFile) {
 
         // Process geometry cards
         const wires = []; // Track wires for structure specification output
+
+        // Track maximum gain for -g option
+        let maxGain = -Infinity;
+
+        // Collect results for CSV/XML output
+        const resultsData = {
+            antennaInput: [],
+            currents: [],
+            gains: [],
+            radiationPatterns: []
+        };
 
         for (const card of cards.geometry) {
             switch (card.card) {
@@ -581,6 +637,22 @@ async function processNecFile(inputFile, outputFile) {
                                 // Power = 0.5 * Re(V * I*)
                                 power = 0.5 * (vReal * iReal + vImag * iImag);
 
+                                // Store for CSV/XML output
+                                resultsData.antennaInput.push({
+                                    tag: excitationTag,
+                                    segment: excitationSegment,
+                                    frequency: currentFreq,
+                                    voltageReal: vReal,
+                                    voltageImag: vImag,
+                                    currentReal: iReal,
+                                    currentImag: iImag,
+                                    impedanceReal: zReal,
+                                    impedanceImag: zImag,
+                                    admittanceReal: yReal,
+                                    admittanceImag: yImag,
+                                    power: power
+                                });
+
                                 output.line('                      ----- ANTENNA INPUT PARAMETERS -----');
                                 output.line('  TAG   SEG       VOLTAGE (VOLTS)         CURRENT (AMPS)         IMPEDANCE (OHMS)        ADMITTANCE (MHOS)     POWER');
                                 output.line('  NO.   NO.     REAL      IMAGINARY     REAL      IMAGINARY     REAL      IMAGINARY    REAL       IMAGINARY   (WATTS)');
@@ -617,6 +689,23 @@ async function processNecFile(inputFile, outputFile) {
                                     for (let i = 0; i < currCount; i++) {
                                         const curr = nec.getCurrent(currentFreqIndex, i);
                                         if (curr.success) {
+                                            const magnitude = Math.sqrt(curr.currentReal**2 + curr.currentImag**2);
+                                            const phaseDeg = Math.atan2(curr.currentImag, curr.currentReal) * 180 / Math.PI;
+
+                                            // Store for CSV/XML output
+                                            resultsData.currents.push({
+                                                segment: curr.segmentNumber,
+                                                tag: curr.segmentTag,
+                                                x: curr.x,
+                                                y: curr.y,
+                                                z: curr.z,
+                                                length: curr.length,
+                                                currentReal: curr.currentReal,
+                                                currentImag: curr.currentImag,
+                                                magnitude: magnitude,
+                                                phase: phaseDeg
+                                            });
+
                                             const segNum = curr.segmentNumber.toString().padStart(5);
                                             const tag = curr.segmentTag.toString().padStart(5);
                                             const x = curr.x.toFixed(4).padStart(10);
@@ -625,8 +714,8 @@ async function processNecFile(inputFile, outputFile) {
                                             const len = curr.length.toFixed(5).padStart(9);
                                             const re = formatScientific(curr.currentReal, 4).toLowerCase().padStart(12);
                                             const im = formatScientific(curr.currentImag, 4).toLowerCase().padStart(12);
-                                            const mag = formatScientific(Math.sqrt(curr.currentReal**2 + curr.currentImag**2), 4).toLowerCase().padStart(11);
-                                            const phase = (Math.atan2(curr.currentImag, curr.currentReal) * 180 / Math.PI).toFixed(3).padStart(10);
+                                            const mag = formatScientific(magnitude, 4).toLowerCase().padStart(11);
+                                            const phase = phaseDeg.toFixed(3).padStart(10);
                                             output.line(`${segNum}${tag}${x}${y}${z}${len}${re}${im}${mag}${phase}`);
                                         }
                                     }
@@ -904,6 +993,23 @@ async function processNecFile(inputFile, outputFile) {
                                             try {
                                                 const data = nec.getRadiationPatternData(rpIndex, kth, kph);
                                                 if (data.success) {
+                                                    // Track maximum gain
+                                                    if (data.powerTot > maxGain) {
+                                                        maxGain = data.powerTot;
+                                                    }
+
+                                                    // Store for CSV/XML output
+                                                    resultsData.radiationPatterns.push({
+                                                        theta: data.theta,
+                                                        phi: data.phi,
+                                                        gainVert: data.powerVert,
+                                                        gainHoriz: data.powerHoriz,
+                                                        gainTotal: data.powerTot,
+                                                        axialRatio: data.axialRatio,
+                                                        tilt: data.tilt,
+                                                        polSense: data.polSense
+                                                    });
+
                                                     const polSenseStr = ['LINEAR', 'RIGHT ', 'LEFT  ', '      '][data.polSense] || 'LINEAR';
 
                                                     const theta = data.theta.toFixed(2).padStart(7);
@@ -962,9 +1068,137 @@ async function processNecFile(inputFile, outputFile) {
         // Cleanup
         nec.delete();
 
-        // Write output
-        fs.writeFileSync(outputFile, output.getOutput());
-        console.log(`Output written to: ${outputFile}`);
+        // Handle gain-only mode (-g)
+        if (options.gainOnly) {
+            if (maxGain === -Infinity) {
+                console.log('No radiation pattern data available');
+            } else {
+                console.log(maxGain.toFixed(4));
+            }
+            return 0;
+        }
+
+        // Generate output based on format options
+        let outputContent = output.getOutput();
+
+        // Handle stdout mode with CSV/XML formatting
+        if (options.stdout) {
+            if (options.csv) {
+                // Output results in CSV format
+                let csvOutput = '';
+
+                // Antenna Input Parameters CSV
+                if (resultsData.antennaInput.length > 0) {
+                    csvOutput += '# ANTENNA INPUT PARAMETERS\n';
+                    csvOutput += 'tag,segment,frequency_mhz,voltage_real,voltage_imag,current_real,current_imag,impedance_real,impedance_imag,admittance_real,admittance_imag,power_watts\n';
+                    for (const ai of resultsData.antennaInput) {
+                        csvOutput += `${ai.tag},${ai.segment},${ai.frequency},${ai.voltageReal},${ai.voltageImag},${ai.currentReal},${ai.currentImag},${ai.impedanceReal},${ai.impedanceImag},${ai.admittanceReal},${ai.admittanceImag},${ai.power}\n`;
+                    }
+                    csvOutput += '\n';
+                }
+
+                // Currents CSV
+                if (resultsData.currents.length > 0) {
+                    csvOutput += '# CURRENTS\n';
+                    csvOutput += 'segment,tag,x,y,z,length,current_real,current_imag,magnitude,phase_deg\n';
+                    for (const c of resultsData.currents) {
+                        csvOutput += `${c.segment},${c.tag},${c.x},${c.y},${c.z},${c.length},${c.currentReal},${c.currentImag},${c.magnitude},${c.phase}\n`;
+                    }
+                    csvOutput += '\n';
+                }
+
+                // Radiation Patterns CSV
+                if (resultsData.radiationPatterns.length > 0) {
+                    csvOutput += '# RADIATION PATTERNS\n';
+                    csvOutput += 'theta_deg,phi_deg,gain_vert_db,gain_horiz_db,gain_total_db,axial_ratio,tilt_deg,pol_sense\n';
+                    const polSenseNames = ['LINEAR', 'RIGHT', 'LEFT', 'UNKNOWN'];
+                    for (const rp of resultsData.radiationPatterns) {
+                        csvOutput += `${rp.theta},${rp.phi},${rp.gainVert},${rp.gainHoriz},${rp.gainTotal},${rp.axialRatio},${rp.tilt},${polSenseNames[rp.polSense] || 'UNKNOWN'}\n`;
+                    }
+                }
+
+                console.log(csvOutput);
+            } else if (options.xml) {
+                // Output results in XML format
+                let xmlOutput = '<?xml version="1.0" encoding="UTF-8"?>\n';
+                xmlOutput += '<nec_results version="1.7.5-wasm">\n';
+
+                // Antenna Input Parameters XML
+                if (resultsData.antennaInput.length > 0) {
+                    xmlOutput += '  <antenna_input_parameters>\n';
+                    for (const ai of resultsData.antennaInput) {
+                        xmlOutput += '    <entry>\n';
+                        xmlOutput += `      <tag>${ai.tag}</tag>\n`;
+                        xmlOutput += `      <segment>${ai.segment}</segment>\n`;
+                        xmlOutput += `      <frequency_mhz>${ai.frequency}</frequency_mhz>\n`;
+                        xmlOutput += `      <voltage_real>${ai.voltageReal}</voltage_real>\n`;
+                        xmlOutput += `      <voltage_imag>${ai.voltageImag}</voltage_imag>\n`;
+                        xmlOutput += `      <current_real>${ai.currentReal}</current_real>\n`;
+                        xmlOutput += `      <current_imag>${ai.currentImag}</current_imag>\n`;
+                        xmlOutput += `      <impedance_real>${ai.impedanceReal}</impedance_real>\n`;
+                        xmlOutput += `      <impedance_imag>${ai.impedanceImag}</impedance_imag>\n`;
+                        xmlOutput += `      <admittance_real>${ai.admittanceReal}</admittance_real>\n`;
+                        xmlOutput += `      <admittance_imag>${ai.admittanceImag}</admittance_imag>\n`;
+                        xmlOutput += `      <power_watts>${ai.power}</power_watts>\n`;
+                        xmlOutput += '    </entry>\n';
+                    }
+                    xmlOutput += '  </antenna_input_parameters>\n';
+                }
+
+                // Currents XML
+                if (resultsData.currents.length > 0) {
+                    xmlOutput += '  <currents>\n';
+                    for (const c of resultsData.currents) {
+                        xmlOutput += '    <current>\n';
+                        xmlOutput += `      <segment>${c.segment}</segment>\n`;
+                        xmlOutput += `      <tag>${c.tag}</tag>\n`;
+                        xmlOutput += `      <x>${c.x}</x>\n`;
+                        xmlOutput += `      <y>${c.y}</y>\n`;
+                        xmlOutput += `      <z>${c.z}</z>\n`;
+                        xmlOutput += `      <length>${c.length}</length>\n`;
+                        xmlOutput += `      <real>${c.currentReal}</real>\n`;
+                        xmlOutput += `      <imag>${c.currentImag}</imag>\n`;
+                        xmlOutput += `      <magnitude>${c.magnitude}</magnitude>\n`;
+                        xmlOutput += `      <phase_deg>${c.phase}</phase_deg>\n`;
+                        xmlOutput += '    </current>\n';
+                    }
+                    xmlOutput += '  </currents>\n';
+                }
+
+                // Radiation Patterns XML
+                if (resultsData.radiationPatterns.length > 0) {
+                    xmlOutput += '  <radiation_patterns>\n';
+                    const polSenseNames = ['LINEAR', 'RIGHT', 'LEFT', 'UNKNOWN'];
+                    for (const rp of resultsData.radiationPatterns) {
+                        xmlOutput += '    <pattern>\n';
+                        xmlOutput += `      <theta_deg>${rp.theta}</theta_deg>\n`;
+                        xmlOutput += `      <phi_deg>${rp.phi}</phi_deg>\n`;
+                        xmlOutput += `      <gain_vert_db>${rp.gainVert}</gain_vert_db>\n`;
+                        xmlOutput += `      <gain_horiz_db>${rp.gainHoriz}</gain_horiz_db>\n`;
+                        xmlOutput += `      <gain_total_db>${rp.gainTotal}</gain_total_db>\n`;
+                        xmlOutput += `      <axial_ratio>${rp.axialRatio}</axial_ratio>\n`;
+                        xmlOutput += `      <tilt_deg>${rp.tilt}</tilt_deg>\n`;
+                        xmlOutput += `      <polarization_sense>${polSenseNames[rp.polSense] || 'UNKNOWN'}</polarization_sense>\n`;
+                        xmlOutput += '    </pattern>\n';
+                    }
+                    xmlOutput += '  </radiation_patterns>\n';
+                }
+
+                xmlOutput += '</nec_results>\n';
+                console.log(xmlOutput);
+            } else {
+                // Plain stdout output (full output)
+                console.log(outputContent);
+            }
+        }
+
+        // Write output to file (unless gain-only mode)
+        if (outputFile) {
+            fs.writeFileSync(outputFile, outputContent);
+            if (!options.stdout) {
+                console.log(`Output written to: ${outputFile}`);
+            }
+        }
 
         return 0;
 
@@ -972,21 +1206,111 @@ async function processNecFile(inputFile, outputFile) {
         console.error('Error processing NEC file:', error.message);
         console.error(error.stack);
 
-        // Write output anyway (might have partial results)
-        fs.writeFileSync(outputFile, output.getOutput());
-        console.log(`Partial output written to: ${outputFile}`);
+        // Write output anyway (might have partial results) - unless gain-only mode
+        if (!options.gainOnly && outputFile) {
+            fs.writeFileSync(outputFile, output.getOutput());
+            console.log(`Partial output written to: ${outputFile}`);
+        }
 
         try { nec.delete(); } catch(e) {}
         return 1;
     }
 }
 
+// Run benchmark simulation
+async function runBenchmark() {
+    const scriptDir = __dirname;
+    const createNecppModule = require(path.join(scriptDir, 'necpp.js'));
+
+    console.log('The nec2++ benchmark.');
+    console.log('nec2++ version 1.7.5-wasm [WASM/Node.js]');
+    console.log();
+
+    // Load WASM module with debug output redirected to stderr
+    const Module = await createNecppModule({
+        print: (text) => console.error(text),    // Redirect stdout from WASM to stderr
+        printErr: (text) => console.error(text)  // Keep stderr as stderr
+    });
+
+    const startTime = performance.now();
+    const iterations = 20;
+
+    for (let iter = 0; iter < iterations; iter++) {
+        // First benchmark: Center fed linear antenna
+        {
+            const nec = new Module.NecppWrapper();
+            try {
+                nec.wire(0, 8, 0.0, 0.0, -0.25, 0.0, 0.0, 0.25, 0.00001, 1.0, 1.0);
+                nec.geometryComplete(0);
+                nec.frCard(0, 3, 200.0, 50.0);
+                nec.exCard(5, 0, 5, 1, 1.0, 0.0, 50.0, 0.0, 0.0, 0.0);
+                nec.xqCard(0);
+                nec.ldCard(5, 0, 0, 0, 3.72e7, 0.0, 0.0);
+                nec.frCard(0, 1, 300.0, 0.0);
+                nec.exCard(5, 0, 5, 0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+                nec.gnCard(1, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+                nec.xqCard(0);
+            } finally {
+                nec.delete();
+            }
+        }
+
+        // Second benchmark: More complex geometry
+        {
+            const nec = new Module.NecppWrapper();
+            try {
+                nec.wire(0, 36, 0, 0, 0, -0.042, 0.008, 0.017, 0.001, 1.0, 1.0);
+                nec.wire(0, 21, 0.042, 0.002, 0.017, -0.028, 0.011, 0.005, 0.001, 1.0, 1.0);
+                nec.wire(0, 70, -0.058, 0.021, 0.005, 0.039, 0.062, 0.017, 0.001, 1.0, 1.0);
+                nec.wire(0, 70, 0.048, 0.021, -0.005, 0.035, 0.043, 0.014, 0.001, 1.0, 1.0);
+                nec.wire(0, 50, 0.042, 0.018, 0.017, 0.017, 0.015, 0.024, 0.001, 1.0, 1.0);
+                nec.wire(0, 66, 0.017, -0.015, 0.014, -0.027, 0.04, -0.031, 0.001, 1.0, 1.0);
+                nec.wire(0, 85, 0.027, 0.04, 0.031, -0.046, -0.01, 0.028, 0.001, 1.0, 1.0);
+                nec.wire(0, 47, 0.046, -0.01, 0.028, -0.013, -0.005, 0.031, 0.001, 1.0, 1.0);
+                nec.wire(0, 70, 0.027, 0.015, 0.014, -0.078, 0.038, -0.04, 0.001, 1.0, 1.0);
+                nec.wire(0, 77, 0.078, -0.038, 0.04, 0.049, 0.065, 0.04, 0.001, 1.0, 1.0);
+                nec.geometryComplete(0);
+                nec.gnCard(-1, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+                nec.ldCard(5, 0, 0, 0, 3.72e7, 0.0, 0.0);
+                nec.ptCard(-1, 0, 0, 0);
+                nec.exCard(1, 1, 1, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+                nec.frCard(0, 2, 2400.0, 100.0);
+                nec.rpCard(0, 1, 1, 0, 5, 0, 0, 90.0, 90.0, 0.0, 0.0, 0.0, 0.0);
+            } finally {
+                nec.delete();
+            }
+        }
+    }
+
+    const endTime = performance.now();
+    const elapsedMs = endTime - startTime;
+    const elapsedSec = elapsedMs / 1000.0;
+
+    // Benchmark score: 70 / seconds (matching C++ calculation)
+    const benchScore = 70.0 / elapsedSec;
+
+    console.log();
+    console.log(`Your computer's score is: ${benchScore.toFixed(2)} NEC's`);
+
+    return 0;
+}
+
 // Main
 const options = parseArgs();
 
-processNecFile(options.input, options.output)
-    .then(code => process.exit(code))
-    .catch(error => {
-        console.error('Fatal error:', error);
-        process.exit(1);
-    });
+// Handle benchmark mode
+if (options.benchmark) {
+    runBenchmark()
+        .then(code => process.exit(code))
+        .catch(error => {
+            console.error('Benchmark error:', error);
+            process.exit(1);
+        });
+} else {
+    processNecFile(options.input, options.output, options)
+        .then(code => process.exit(code))
+        .catch(error => {
+            console.error('Fatal error:', error);
+            process.exit(1);
+        });
+}
